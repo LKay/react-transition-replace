@@ -1,0 +1,14 @@
+node_modules
+lib
+logs
+
+src/**/*.js*
+test/**/*.js*
+
+.vscode
+.DS_Store
+*.swp
+*.log*
+*.iml
+.idea
+*.orig

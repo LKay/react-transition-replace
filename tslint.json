@@ -1,0 +1,36 @@
+{
+  "extends": ["tslint:recommended", "tslint-react"],
+  "rules": {
+    "interface-name": false,
+    "jsx-curly-spacing": "always",
+    "max-line-length": [true, 140],
+    "member-access": [true, "no-public"],
+    "member-ordering": false,
+    "no-shadowed-variable": false,
+    "no-unused-variable": [
+      true,
+      {
+        "ignore-pattern": "^_"
+      }
+    ],
+    "object-literal-sort-keys": false,
+    "one-line": false,
+    "only-arrow-functions": false,
+    "ordered-imports": false,
+    "trailing-comma": [
+      true,
+      {
+        "multiline": "never",
+        "singleline": "never"
+      }
+    ],
+    "variable-name": [
+      true,
+      "ban-keywords",
+      "check-format",
+      "allow-leading-underscore",
+      "allow-pascal-case"
+    ]
+
+  }
+}

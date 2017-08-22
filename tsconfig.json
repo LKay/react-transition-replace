@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["dom", "es6", "scripthost"],
+    "outDir": "lib",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "declaration": true,
+    "sourceMap": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "strictNullChecks": false,
+    "jsx": "react"
+  },
+  "files": [
+    "src/index.ts",
+    "src/TransitionReplace.tsx"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
