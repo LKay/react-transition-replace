@@ -19,7 +19,7 @@ jobs:
         steps:
             - restore_cache:
                 keys:
-                    -node-modules
+                    - node-modules
 
             - run: npm i
 
