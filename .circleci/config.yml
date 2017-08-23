@@ -1,7 +1,7 @@
 version: 2.0
 
 jobs:
-    checkout:
+    checkout_code:
         machine:
           enable: true
 
@@ -10,7 +10,7 @@ jobs:
     steps:
         - checkout
 
-  dependencies:
+  bundle_dependencies:
       docker:
           - image: node:8-alpine
 
@@ -18,7 +18,8 @@ jobs:
 
       steps:
           - restore_cache:
-              key: node-modules
+              keys:
+                  -node-modules
 
           - run: npm i
 
@@ -63,15 +64,15 @@ jobs:
 workflows:
     version: 2
 
-    build-n-deploy:
+    build_and_deploy:
         jobs:
-            - checkout
-            - dependencies:
+            - checkout_code
+            - bundle_dependencies:
                 requires:
-                    - checkout
+                    - checkout_code
             - test:
                 requires:
-                    - dependencies
+                    - bundle_dependencies
             - build:
                 requires:
                     - test
