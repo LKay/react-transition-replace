@@ -1,0 +1,72 @@
+version: 2
+jobs:
+  checkout:
+    machine:
+      enable: true
+    working_directory: ~/project
+    steps:
+      - checkout
+
+  dependencies:
+    docker:
+      - image: node:8-alpine
+    working_directory: ~/project
+    steps:
+      - restore_cache:
+        key: node-modules
+      - run: npm i
+      - save_cache:
+        key: node-modules
+        paths:
+          - ~/node_modules
+
+  test:
+    docker:
+      - image: node:8-alpine
+    working_directory: ~/project
+    environment:
+      COVERALLS_SERVICE_JOB_ID: $CIRCLE_BUILD_NUM
+      COVERALLS_GIT_COMMIT: $CIRLE_SHA1
+      COVERALLS_PARALLEL: true
+    steps:
+      - run: npm test
+      - run: if [ $CIRCLE_BRANCH = 'master' ]; then npm run coverage; fi
+
+  build:
+    docker:
+      - image: node:8-alpine
+    working_directory: ~/project
+    steps:
+      - run: npm run build
+
+  deploy:
+    docker:
+      - image: node:8-alpine
+    working_directory: ~/project
+    steps:
+      - run: echo -e "$NPM_USERNAME\n$NPM_PASSWORD\n$NPM_EMAIL" | npm login
+      - run: npm publish
+      - run: npm logout
+
+workflows:
+  version: 2
+  build-n-deploy:
+    jobs:
+      - checkout
+      - dependencies:
+        requires:
+          - checkout
+      - test:
+        requires:
+          - dependencies
+      - build:
+        requires:
+          - test
+      - deploy:
+          requires:
+            - build
+          filters:
+            tags:
+              only: /[0-9]+(\.[0-9]+){2}(-(alpha|beta)[0-9]+)?/
+            branches:
+              ignore: /.*/
