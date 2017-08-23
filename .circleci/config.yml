@@ -9,6 +9,11 @@ jobs:
 
         steps:
             - checkout
+            - run: echo $CIRCLE_SHA1 > .circle-sha
+            - save_cache:
+                key: project-{{ checksum ".circle-sha" }}
+                paths:
+                    - ~/project
 
     dependencies:
         docker:
@@ -17,16 +22,20 @@ jobs:
         working_directory: ~/project
 
         steps:
+            - run: echo $CIRCLE_SHA1 > .circle-sha
             - restore_cache:
                 keys:
-                    - node-modules
+                    - project-{{ checksum ".circle-sha" }}
+            - restore_cache:
+                keys:
+                    - node_modules-{{ checksum "package-lock.json" }}
 
             - run: npm i
 
             - save_cache:
-                key: node-modules
+                key: node_modules-{{ checksum "package-lock.json" }}
                 paths:
-                    - ~/node_modules
+                    - ~/project/node_modules
 
     test:
         docker:
@@ -40,6 +49,13 @@ jobs:
             COVERALLS_PARALLEL: true
 
         steps:
+            - run: echo $CIRCLE_SHA1 > .circle-sha
+            - restore_cache:
+                keys:
+                    - project-{{ checksum ".circle-sha" }}
+            - restore_cache:
+                keys:
+                    - node_modules-{{ checksum "package-lock.json" }}
             - run: npm test
             - run: if [ $CIRCLE_BRANCH = 'master' ]; then npm run coverage; fi
 
@@ -50,6 +66,13 @@ jobs:
         working_directory: ~/project
 
         steps:
+            - run: echo $CIRCLE_SHA1 > .circle-sha
+            - restore_cache:
+                keys:
+                    - project-{{ checksum ".circle-sha" }}
+            - restore_cache:
+                keys:
+                    - node_modules-{{ checksum "package-lock.json" }}
             - run: npm run build
 
     deploy:
@@ -57,6 +80,13 @@ jobs:
             - image: node:8-alpine
         working_directory: ~/project
         steps:
+            - run: echo $CIRCLE_SHA1 > .circle-sha
+            - restore_cache:
+                keys:
+                    - project-{{ checksum ".circle-sha" }}
+            - restore_cache:
+                keys:
+                    - node_modules-{{ checksum "package-lock.json" }}
             - run: echo -e "$NPM_USERNAME\n$NPM_PASSWORD\n$NPM_EMAIL" | npm login
             - run: npm publish
             - run: npm logout
