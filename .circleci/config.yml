@@ -7,7 +7,6 @@ jobs:
 
         steps:
             - checkout
-            - run: ls -al
             - run: echo $CIRCLE_SHA1 > .circle-sha
             - save_cache:
                 key: project-{{ checksum ".circle-sha" }}
@@ -27,7 +26,6 @@ jobs:
                 keys:
                     - node_modules-{{ checksum "package.json" }}
 
-            - run: ls -al
             - run: npm i
 
             - save_cache:
