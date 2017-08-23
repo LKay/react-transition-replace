@@ -1,78 +1,78 @@
 version: 2.0
 
 jobs:
-    checkout_code:
+    checkout:
         machine:
-          enable: true
+            enable: true
 
-    working_directory: ~/project
+        working_directory: ~/project
 
-    steps:
-        - checkout
+        steps:
+            - checkout
 
-  bundle_dependencies:
-      docker:
-          - image: node:8-alpine
+    dependencies:
+        docker:
+            - image: node:8-alpine
 
-      working_directory: ~/project
+        working_directory: ~/project
 
-      steps:
-          - restore_cache:
-              keys:
-                  -node-modules
+        steps:
+            - restore_cache:
+                keys:
+                    -node-modules
 
-          - run: npm i
+            - run: npm i
 
-          - save_cache:
-              key: node-modules
-              paths:
-                  - ~/node_modules
+            - save_cache:
+                key: node-modules
+                paths:
+                    - ~/node_modules
 
-  test:
-      docker:
-          - image: node:8-alpine
+    test:
+        docker:
+            - image: node:8-alpine
 
-      working_directory: ~/project
+        working_directory: ~/project
 
-      environment:
-          COVERALLS_SERVICE_JOB_ID: $CIRCLE_BUILD_NUM
-          COVERALLS_GIT_COMMIT: $CIRLE_SHA1
-          COVERALLS_PARALLEL: true
+        environment:
+            COVERALLS_SERVICE_JOB_ID: $CIRCLE_BUILD_NUM
+            COVERALLS_GIT_COMMIT: $CIRLE_SHA1
+            COVERALLS_PARALLEL: true
 
-      steps:
-          - run: npm test
-          - run: if [ $CIRCLE_BRANCH = 'master' ]; then npm run coverage; fi
+        steps:
+            - run: npm test
+            - run: if [ $CIRCLE_BRANCH = 'master' ]; then npm run coverage; fi
 
-  build:
-      docker:
-          - image: node:8-alpine
+    build:
+        docker:
+            - image: node:8-alpine
 
-      working_directory: ~/project
+        working_directory: ~/project
 
-      steps:
-          - run: npm run build
+        steps:
+            - run: npm run build
 
-  deploy:
-      docker:
-          - image: node:8-alpine
-      working_directory: ~/project
-      steps:
-          - run: echo -e "$NPM_USERNAME\n$NPM_PASSWORD\n$NPM_EMAIL" | npm login
-          - run: npm publish
-          - run: npm logout
+    deploy:
+        docker:
+            - image: node:8-alpine
+        working_directory: ~/project
+        steps:
+            - run: echo -e "$NPM_USERNAME\n$NPM_PASSWORD\n$NPM_EMAIL" | npm login
+            - run: npm publish
+            - run: npm logout
 
 workflows:
     version: 2
 
     build_and_deploy:
         jobs:
-            - checkout_code
-            - bundle_dependencies:
+            - checkout
+            - dependencies:
                 requires:
-                    - checkout_code
+                    - checkout
             - test:
                 requires:
-                    - bundle_dependencies
+                    - dependencies
             - build:
                 requires:
                     - test
