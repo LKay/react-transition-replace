@@ -5,9 +5,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
+### Added
+- CircleCi config
+- New badges to README
 
 ## 0.0.2 - 2017-08-23
-### Changed
+### Added
 - Basic README file
 - This CHANGELOG
 
