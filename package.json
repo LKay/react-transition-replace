@@ -6,8 +6,8 @@
   "scripts": {
     "build": "rimraf lib && tsc",
     "test": "npm run lint",
-    "lint": "tslint --type-check --project tsconfig.json",
-    "prepublishOnly": "npm run test && npm run build"
+    "coverage": "echo \"Not implemented\" && exit 0",
+    "lint": "tslint --type-check --project tsconfig.json"
   },
   "repository": {
     "type": "git",

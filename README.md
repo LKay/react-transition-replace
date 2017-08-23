@@ -2,6 +2,8 @@
 
 [![npm](https://img.shields.io/npm/v/react-transition-replace.svg?style=flat-square)](https://www.npmjs.com/package/react-transition-replace)
 [![npm dm](https://img.shields.io/npm/dm/react-transition-replace.svg?style=flat-square)](https://www.npmjs.com/package/react-transition-replace)
+[![CircleCI](https://img.shields.io/circleci/project/github/LKay/react-transition-replace/master.svg?style=flat-square)](https://circleci.com/gh/LKay/react-transition-replace/tree/master)
+[![Coveralls](https://img.shields.io/coveralls/LKay/react-transition-replace/master.svg?style=flat-square)](https://coveralls.io/github/LKay/react-transition-replace)
 
 The `react-transition-replace` is a rewrite of widely used library [`react-css-transition-replace`](https://github.com/marnusw/react-css-transition-replace) so it is compatible with version **2.x.x** of the [`react-transition-group`](https://github.com/reactjs/react-transition-group).
 
