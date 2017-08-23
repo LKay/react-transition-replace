@@ -25,13 +25,13 @@ jobs:
                     - project-{{ checksum ".circle-sha" }}
             - restore_cache:
                 keys:
-                    - node_modules-{{ checksum "package-lock.json" }}
+                    - node_modules-{{ checksum "package.json" }}
 
             - run: ls -al
             - run: npm i
 
             - save_cache:
-                key: node_modules-{{ checksum "package-lock.json" }}
+                key: node_modules-{{ checksum "package.json" }}
                 paths:
                     - ~/project/node_modules
 
@@ -51,7 +51,7 @@ jobs:
                     - project-{{ checksum ".circle-sha" }}
             - restore_cache:
                 keys:
-                    - node_modules-{{ checksum "package-lock.json" }}
+                    - node_modules-{{ checksum "package.json" }}
             - run: npm test
             - run: if [ $CIRCLE_BRANCH = 'master' ]; then npm run coverage; fi
 
@@ -66,7 +66,7 @@ jobs:
                     - project-{{ checksum ".circle-sha" }}
             - restore_cache:
                 keys:
-                    - node_modules-{{ checksum "package-lock.json" }}
+                    - node_modules-{{ checksum "package.json" }}
             - run: npm run build
 
     deploy:
@@ -80,7 +80,7 @@ jobs:
                     - project-{{ checksum ".circle-sha" }}
             - restore_cache:
                 keys:
-                    - node_modules-{{ checksum "package-lock.json" }}
+                    - node_modules-{{ checksum "package.json" }}
             - run: echo -e "$NPM_USERNAME\n$NPM_PASSWORD\n$NPM_EMAIL" | npm login
             - run: npm publish
             - run: npm logout
