@@ -5,8 +5,6 @@ jobs:
         machine:
             enable: true
 
-        working_directory: ~/project
-
         steps:
             - checkout
             - run: ls -al
@@ -19,8 +17,6 @@ jobs:
     dependencies:
         docker:
             - image: node:8-alpine
-
-        working_directory: ~/project
 
         steps:
             - run: echo $CIRCLE_SHA1 > .circle-sha
@@ -43,8 +39,6 @@ jobs:
         docker:
             - image: node:8-alpine
 
-        working_directory: ~/project
-
         environment:
             COVERALLS_SERVICE_JOB_ID: $CIRCLE_BUILD_NUM
             COVERALLS_GIT_COMMIT: $CIRLE_SHA1
@@ -65,8 +59,6 @@ jobs:
         docker:
             - image: node:8-alpine
 
-        working_directory: ~/project
-
         steps:
             - run: echo $CIRCLE_SHA1 > .circle-sha
             - restore_cache:
@@ -80,7 +72,7 @@ jobs:
     deploy:
         docker:
             - image: node:8-alpine
-        working_directory: ~/project
+
         steps:
             - run: echo $CIRCLE_SHA1 > .circle-sha
             - restore_cache:
