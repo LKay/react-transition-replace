@@ -30,6 +30,7 @@ jobs:
                 keys:
                     - node_modules-{{ checksum "package-lock.json" }}
 
+            - run: ls -al
             - run: npm i
 
             - save_cache:
