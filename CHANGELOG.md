@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
+
+## 0.0.3 - 2017-08-31
 ### Added
 - CircleCi config
 - New badges to README
@@ -19,6 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Initial code for the module
 
 ## Compare
-- [Unreleased](https://github.com/LKay/react-transition-replace/compare/v0.0.2...HEAD)
+- [Unreleased](https://github.com/LKay/react-transition-replace/compare/v0.0.3...HEAD)
+- [0.0.3](https://github.com/LKay/react-transition-replace/compare/v0.0.2...v0.0.3)
 - [0.0.2](https://github.com/LKay/react-transition-replace/compare/v0.0.1...v0.0.2)
 - [0.0.1](https://github.com/LKay/react-transition-replace/compare/5a6be1d...v0.0.1)
