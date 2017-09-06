@@ -1,0 +1,25 @@
+.fade-appear,
+.fade-enter {
+  opacity: 0;
+
+  &.fade-appear-active,
+  &.fade-enter-active {
+    opacity: 1;
+    transition-property: opacity;
+    transition-duration: .3s;
+  }
+}
+
+.fade-exit {
+  opacity: 1;
+
+  &.fade-exit-active {
+    opacity: 0;
+    transition-property: opacity;
+    transition-duration: .3s;
+  }
+}
+
+.fade-height {
+  transition: height .3s ease-in-out;
+}
