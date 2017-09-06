@@ -79,7 +79,7 @@ jobs:
             - restore_cache:
                 keys:
                     - node_modules-{{ checksum "package.json" }}
-            - command: |
+            - run: |
                 $VERSIONS=`npm info $CIRCLE_PROJECT_REPONAME versions | grep -o -E '\d+(\.\d+){2}(-(alpha|beta)(\d+)?)?'`
                 if [[ ! ${VERSIONS[*]} =~ "$CIRCLE_TAG" ]];
                 then
