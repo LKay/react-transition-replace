@@ -79,14 +79,15 @@ jobs:
             - restore_cache:
                 keys:
                     - node_modules-{{ checksum "package.json" }}
-            - run: |
-                $VERSIONS=`npm info $CIRCLE_PROJECT_REPONAME versions | grep -o -E '\d+(\.\d+){2}(-(alpha|beta)(\d+)?)?'`
-                if [[ ! ${VERSIONS[*]} =~ "$CIRCLE_TAG" ]];
-                then
-                    echo -e "$NPM_USERNAME\n$NPM_PASSWORD\n$NPM_EMAIL" | npm login
-                    npm publish
-                    npm logout
-                fi;
+            - run:
+                - command: |
+                    $VERSIONS=`npm info $CIRCLE_PROJECT_REPONAME versions | grep -o -E '\d+(\.\d+){2}(-(alpha|beta)(\d+)?)?'`
+                    if [[ ! ${VERSIONS[*]} =~ "$CIRCLE_TAG" ]];
+                    then
+                        echo -e "$NPM_USERNAME\n$NPM_PASSWORD\n$NPM_EMAIL" | npm login
+                        npm publish
+                        npm logout
+                    fi;
 workflows:
     version: 2
 
