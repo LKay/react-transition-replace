@@ -10,7 +10,11 @@
     "noImplicitAny": true,
     "noImplicitThis": true,
     "strictNullChecks": false,
-    "jsx": "react"
+    "jsx": "react",
+    "baseUrl": ".",
+    "paths": {
+      "*": ["types/*"]
+    }
   },
   "files": [
     "src/index.ts",
