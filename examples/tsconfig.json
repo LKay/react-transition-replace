@@ -7,18 +7,13 @@
     "moduleResolution": "node",
     "declaration": true,
     "sourceMap": true,
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "noImplicitThis": true,
     "strictNullChecks": false,
-    "jsx": "react",
-    "baseUrl": ".",
-    "paths": {
-      "*": ["types/*"]
-    }
+    "jsx": "react"
   },
-  "files": [
-    "src/index.ts",
-    "src/TransitionReplace.tsx"
+  "include": [
+    "./"
   ],
   "exclude": [
     "node_modules"

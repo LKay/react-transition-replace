@@ -5,6 +5,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
+### Added
+- Example of use with little demo
+
+### Changed
+- Handling animation and applying transition styles
+- Use of animation frame instead of looped timeout
+- Update README file to correspond with changes and add troubleshooting section
+
+### Removed
+- Unnecessary `childWrapper` property ans it was replaced by other logic
 
 ## 0.0.3 - 2017-08-31
 ### Added

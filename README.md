@@ -112,6 +112,21 @@ Additionally you need to have you animation defined as CSS styles:
 
 The library is written in Typescript and thus already contains its types definitions however you need to include types definitions for `react-transition-group` (they are defined as peer dependency). Please refer to the definitions from Definitely Typed published as [`@types/react-transition-group`](https://www.npmjs.com/package/@types/react-transition-group).
 
+## Troubleshooting
+
+__Components containing images__
+
+
+There is know issue with correctly transitioning components that contain responsive images. The problem comes from incorrect height of elements calculated at the time or component update.
+Images might not be yet loaded and the time the component that needs to be transitioned and thus can't correctly calculate the height of the whole element. Thay happens because images are
+being loaded after the element is inserted into the DOM tree and before that have initial height of `0`.
+
+There are few workarounds for this:
+* You can specify the `width` and/or `height` attributes on `<img/>` element.
+* You can preload the images and render component when that is completed. Some technique is explained [here](http://www.thonky.com/javascript-and-css-guide/javascript-image-preload).
+* If you're dealing with responsive images which have `height: auto` CSS property and you know the width/height ratio, you can use [this](http://andyshora.com/css-image-container-padding-hack.html) workaround.
+Otherwise there is a way to use media queries for `srcset` attribute on `<img/>`, which is explained [here](https://bitsofco.de/the-srcset-and-sizes-attributes/)
+
 
 ## API
 
@@ -122,7 +137,6 @@ Properties that you can define on the component:
 | Name | Type | Default Value | Note |
 |---------------|------|-------|------|
 | `childFactory`  | `function`  | `(child: ReactElement) => ReactElement`  | The same purpose as in [`TransactionGroup`](https://reactcommunity.org/react-transition-group/#TransitionGroup-prop-childFactory) component.  |
-| `childWrapper`  | `function`  | `(child: ReactElement, props: object) => ReactElement`  | You can specify a wrapper function to for entering child. The `props` parameter will include object with CSS styles than are usualy set as inline styles on the outer element to position entering element absolutely to its parent container.  |
 | `classNames`  | `string` <br> or <br>`{ height: string, heightActive: string }`  | `undefined`  | Can be either a string class name ie. `cross-fade` of object with specific class names for height transition ie. `{ height: "custom-height", heightActive: "some-height-active" }`  |
 | `overflowHidden`  | `boolean`  | `false`  | If it's `true` the CSS `overflow: hidden` will be added to the wrapping container during transition. |
 | `timeout` | `number` | `0` | Timout for height transition. Should be total time that it's necessary to exit old element and enter new.  |
