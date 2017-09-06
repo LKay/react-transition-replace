@@ -81,8 +81,8 @@ jobs:
                     - node_modules-{{ checksum "package.json" }}
             - run:
                 command: |
-                    $VERSIONS=`npm info $CIRCLE_PROJECT_REPONAME versions | grep -o -E '\d+(\.\d+){2}(-(alpha|beta)(\d+)?)?'`
-                    if [[ ! ${VERSIONS[*]} =~ "$CIRCLE_TAG" ]];
+                    versions=`npm info $CIRCLE_PROJECT_REPONAME versions | grep -o -E '\d+(\.\d+){2}(-(alpha|beta)(\d+)?)?'`
+                    if [[ ! ${versions[*]} =~ "$CIRCLE_TAG" ]];
                     then
                         echo -e "$NPM_USERNAME\n$NPM_PASSWORD\n$NPM_EMAIL" | npm login
                         npm publish
