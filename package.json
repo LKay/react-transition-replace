@@ -2,12 +2,19 @@
   "name": "react-transition-replace",
   "version": "0.1.0",
   "description": "A React component to animate replacing one element with another.",
-  "main": "lib/index.js",
+  "main": "index.js",
+  "module": "es/index.js",
   "scripts": {
-    "build": "rimraf lib && tsc",
+    "build": "rimraf lib && npm run build:lib && npm run build:es && npm run build:dist && cp README.md LICENSE ./lib",
+    "build:lib": "tsc",
+    "build:es": "rimraf lib/es && tsc -m es6 -t es6 --outDir ./lib/es",
+    "build:dist": "rimraf lib/dist && webpack && NODE_ENV=production webpack -p",
     "test": "npm run lint",
     "coverage": "echo \"Not implemented\" && exit 0",
-    "lint": "tslint --type-check --project tsconfig.json"
+    "lint": "tslint --project tsconfig.json",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook",
+    "prepublish": "cp ./package.json lib"
   },
   "repository": {
     "type": "git",
@@ -27,37 +34,40 @@
   },
   "homepage": "https://github.com/LKay/react-transition-replace#readme",
   "dependencies": {
-    "@types/classnames": "^2.2.3",
-    "@types/invariant": "^2.2.29",
-    "@types/lodash.pick": "^4.4.3",
-    "@types/prop-types": "^15.5.1",
-    "@types/react": "^15.6.1",
-    "@types/react-dom": "^15.5.4",
-    "@types/react-transition-group": "^2.0.4",
-    "classnames": "^2.2.5",
-    "dom-helpers": "^3.2.1",
     "invariant": "^2.2.2",
-    "lodash.pick": "^4.4.0",
-    "prop-types": "^15.5.10",
-    "react": "^15.6.1",
-    "react-dom": "^15.6.1",
-    "react-transition-group": "^2.2.0"
+    "prop-types": "^15.6.0"
   },
   "devDependencies": {
+    "@storybook/addon-actions": "^3.2.13",
+    "@storybook/react": "^3.2.13",
+    "@types/lorem-ipsum": "^1.0.2",
+    "@types/storybook__react": "^3.0.5",
     "awesome-typescript-loader": "^3.2.3",
-    "rimraf": "^2.6.1",
-    "source-map-loader": "^0.2.1",
-    "tslint": "^5.6.0",
+    "lorem-ipsum": "^1.0.4",
+    "node-sass": "^4.5.3",
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0",
+    "react-transition-group": "^2.2.1",
+    "release": "^2.5.2",
+    "rimraf": "^2.6.2",
+    "sass-loader": "^6.0.6",
+    "source-map-loader": "^0.2.3",
+    "tslint": "^5.8.0",
     "tslint-react": "^3.2.0",
-    "typescript": "^2.4.2",
-    "webpack": "^3.5.5"
+    "typescript": "^2.5.3",
+    "typings-for-css-modules-loader": "^1.7.0",
+    "webpack": "^3.8.1"
+  },
+  "optionalDependencies": {
+    "@types/invariant": "^2.2.29",
+    "@types/prop-types": "^15.5.2",
+    "@types/react": ">=15",
+    "@types/react-dom": ">=15",
+    "@types/react-transition-group": "^2.0.6"
   },
   "peerDependencies": {
-    "@types/react": "15.x",
-    "@types/react-dom": "15.x",
-    "@types/react-transition-group": "2.x",
-    "react": "15.x",
-    "react-dom": "15.x",
-    "react-transition-group": "2.x"
+    "react": ">=15",
+    "react-dom": ">=15",
+    "react-transition-group": "^2"
   }
 }

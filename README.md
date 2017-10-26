@@ -15,7 +15,9 @@ Benefits of `react-transition-replace`:
 
 * Animations are fully configurable with CSS, including having the entering component wait to enter until the leaving component's animation completes. 
 
-## Installation
+## Getting Started
+
+### Installation
 
 To install via `npm` or `yarn`:
 
@@ -25,13 +27,10 @@ npm install react-transition-replace --save
 yarn add react-transition-replace
 ```
 
-The component is intended to work with `reat-transition-group@2.x.x` and utilises some of its components: `Transition` and `CSSTransition`. Because it is a peer dependency you should add it to your project by yourself:
+The component is intended to work with `react-transition-group@2.x.x` and utilises some of its components: `Transition` and `CSSTransition`. Because it is a peer dependency you should add it to your project by yourself.
+### CDN / External
 
-```bash
-npm install react-transition-group --save
-# or
-yarn add react-transition-group
-```
+Since react-transition-replace is fairly small, the overhead of including the library in your application is negligible. However, in situations where it may be useful to benefit from an external CDN when bundling, link to the following CDN: https://unpkg.com/react-transition-replace/dist/react-transition-replace.min.js
 
 ## Examples
 
@@ -132,11 +131,13 @@ Otherwise there is a way to use media queries for `srcset` attribute on `<img/>`
 
 ### `<TransitionReplace>`
 
-Properties that you can define on the component:
+This components takes the same properties as [`TransitionGroup`](https://reactcommunity.org/react-transition-group/#TransitionGroup) and additionally you can specify the following:
 
 | Name | Type | Default Value | Note |
 |---------------|------|-------|------|
-| `childFactory`  | `function`  | `(child: ReactElement) => ReactElement`  | The same purpose as in [`TransactionGroup`](https://reactcommunity.org/react-transition-group/#TransitionGroup-prop-childFactory) component.  |
-| `classNames`  | `string` <br> or <br>`{ height: string, heightActive: string }`  | `undefined`  | Can be either a string class name ie. `cross-fade` of object with specific class names for height transition ie. `{ height: "custom-height", heightActive: "some-height-active" }`  |
+| `changeWidth`  | `boolean`  | `false`  | If it's `true` CSS classes and styles for transitioning element's width will also be applied.  |
+| `classNames`  | `string` <br> or <br>`{ height: string, heightActive: string, width: string, widthActive: string }`  | `undefined`  | Can be either a string class name ie. `cross-fade` of object with specific class names for height transition ie. `{ height: "custom-height", heightActive: "some-height-active" }`  |
+| `easing`  | `string` | `ease`  | CSS transition timing function that will be applied to inline styles. You can fine some reference [here](http://easings.net/)  |
 | `overflowHidden`  | `boolean`  | `false`  | If it's `true` the CSS `overflow: hidden` will be added to the wrapping container during transition. |
+| `inlineTransitions`  | `boolean`  | `true`  | If it's `false` inline CSS styles will not be added to elements and styles should be defined in stylesheets using CSS class names. |
 | `timeout` | `number` | `0` | Timout for height transition. Should be total time that it's necessary to exit old element and enter new.  |

@@ -85,7 +85,7 @@ jobs:
                     if [[ ! ${versions[*]} =~ "$CIRCLE_TAG" ]];
                     then
                         echo -e "$NPM_USERNAME\n$NPM_PASSWORD\n$NPM_EMAIL" | npm login
-                        npm publish
+                        npm publish lib
                         npm logout
                     fi;
 workflows:

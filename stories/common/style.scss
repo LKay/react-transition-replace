@@ -1,0 +1,52 @@
+.slide-container {
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  max-width: 652px;
+}
+
+.slide {
+  .image {
+    width: 100%;
+    height: 0;
+    padding-bottom: 66.71%;
+    position: relative;
+
+    > img {
+      width: 100%;
+      height: auto;
+      position: absolute;
+    }
+  }
+
+  .caption {
+    font-family: -apple-system, ".SFNSText-Regular", "San Francisco", BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", "Lucida Grande", Arial, sans-serif;
+
+    > p {
+      margin:0;
+    }
+  }
+}
+
+.button-toolbar {
+  margin-bottom: 10px;
+
+  .button:not(.last-child) {
+    margin-right: 5px;
+  }
+}
+
+.button {
+  padding: 8px;
+  background-color: #ffffff;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: -apple-system, ".SFNSText-Regular", "San Francisco", BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", "Lucida Grande", Arial, sans-serif;
+  display: inline-block;
+
+  &:hover {
+    background-color: #ececec;
+    cursor: pointer;
+  }
+}

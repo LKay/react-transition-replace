@@ -1,10 +1,8 @@
 import * as React from "react";
 import {Component, StatelessComponent} from "react";
-import { Image, Thumbnail } from "react-bootstrap";
 import loremIpsum = require("lorem-ipsum");
 import { imageFile } from "./image-file";
-
-require("./style.scss");
+import * as styles from "./style.scss";
 
 export interface SlideProps {
     index?: number;
@@ -35,17 +33,16 @@ export default class Slide extends Component<SlideProps, SlideState> {
         } = this.state;
 
         return (
-            <div className="slide">
-                <div className="image">
-                    <Image
+            <div className={ styles.slide }>
+                <div className={ styles.image }>
+                    <img
                         src={ image }
                         alt="slide"
                         width={ 640 }
                         height={ 427 }
-                        responsive
                     />
                 </div>
-                <div className="caption">
+                <div className={ styles.caption }>
                     <h3>{ title }</h3>
                     <p>{ description }</p>
                 </div>
