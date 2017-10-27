@@ -84,7 +84,7 @@ jobs:
                     echo -e "$NPM_USERNAME\n$NPM_PASSWORD\n$NPM_EMAIL" | npm login
                     npm publish lib
                     npm logout
-
+                    
 workflows:
     version: 2
 
@@ -107,4 +107,4 @@ workflows:
                     tags:
                         only: /\d+(\.\d+){2}(-(alpha|beta)(\d+)?)?/
                     branches:
-                        only: master
+                        ignore: /.*/
