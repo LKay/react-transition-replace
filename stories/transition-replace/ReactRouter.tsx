@@ -40,20 +40,13 @@ export default class Story extends Component<{}, StoryState> {
 
         return (
             <div>
-                <h3 className={ styles.title }>Add/Replace and git Remove Content</h3>
+                <h3 className={ styles.title }>Intergration wth React Router</h3>
                 <ButtonToolbar>
-                    <Button onClick={ this.handleClickAdd }>Add/Replace</Button>
-                    <Button onClick={ this.handleClickRemove }>Remove</Button>
+                    <Button>Route 1</Button>
+                    <Button>Route 2</Button>
+                    <Button>Route 3</Button>
                 </ButtonToolbar>
-                <div className={ styles.slideContainer }>
-                    <TransitionReplace
-                        classNames={ classNames }
-                        timeout={ TRANSITION_TIMEOUT }
-                        overflowHidden
-                    >
-                        { child }
-                    </TransitionReplace>
-                </div>
+                <h1>WIP</h1>
             </div>
         );
     }

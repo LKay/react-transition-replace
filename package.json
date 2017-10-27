@@ -35,12 +35,15 @@
   "homepage": "https://github.com/LKay/react-transition-replace#readme",
   "dependencies": {
     "invariant": "^2.2.2",
-    "prop-types": "^15.6.0"
+    "prop-types": "^15.6.0",
+    "react-transition-group": "^2.2.1"
   },
   "devDependencies": {
     "@storybook/addon-actions": "^3.2.13",
     "@storybook/react": "^3.2.13",
     "@types/lorem-ipsum": "^1.0.2",
+    "@types/storybook__addon-actions": "^3.0.1",
+    "@types/storybook__addon-info": "^3.2.0",
     "@types/storybook__react": "^3.0.5",
     "awesome-typescript-loader": "^3.2.3",
     "lorem-ipsum": "^1.0.4",
@@ -67,7 +70,6 @@
   },
   "peerDependencies": {
     "react": ">=15",
-    "react-dom": ">=15",
-    "react-transition-group": "^2"
+    "react-dom": ">=15"
   }
 }

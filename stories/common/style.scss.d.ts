@@ -1,3 +1,4 @@
+export const title: string;
 export const slideContainer: string;
 export const slide: string;
 export const image: string;

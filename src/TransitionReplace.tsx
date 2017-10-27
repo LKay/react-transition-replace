@@ -2,6 +2,7 @@ import * as React from "react";
 import {
     cloneElement,
     Component,
+    ComponentClass,
     HTMLAttributes,
     ReactElement,
     ReactType,
@@ -12,6 +13,7 @@ import {
 import * as PropTypes from "prop-types";
 import * as invariant from "invariant";
 import { TransitionActions, TransitionProps } from "react-transition-group/Transition";
+import TransitionGroup from "react-transition-group/TransitionGroup";
 import { findDOMNode } from "react-dom";
 
 function isNil(obj: any) {
@@ -86,18 +88,67 @@ function childFactory(child: ReactElement<any>): ReactElement<any> {
     return child;
 }
 
+/**
+ * The `<TransitionReplace>` component manages a set of `<Transition>` components
+ * in a list. Like with the `<Transition>` component, `<TransitionReplace>`, is a
+ * state machine for managing the mounting and unmounting of components over
+ * time.
+ *
+ * Consider the example below using the `Fade` CSS transition from before.
+ * As items are removed or added to the TodoList the `in` prop is toggled
+ * automatically by the `<TransitionReplace>`. You can use _any_ `<Transition>`
+ * component in a `<TransitionReplace>`, not just css.
+ *
+ * Note that `<TransitionReplace>`  does not define any animation behavior!
+ * Exactly _how_ a list item animates is up to the individual `<Transition>`
+ * components. This means you can mix and match animations across different
+ * list items.
+ */
 class TransitionReplace extends Component<TransitionReplaceProps, TransitionReplaceState> {
 
     static propTypes = {
-        appear            : PropTypes.bool,
+        ...(TransitionGroup as ComponentClass<any>).propTypes,
+
+        /**
+         * A prop that enables or disables width animations for the container.
+         */
         changeWidth       : PropTypes.bool,
-        children          : PropTypes.node,
-        childFactory      : PropTypes.func,
+
+        /**
+         * The animation classNames applied to the component as it enters or exits.
+         * A single name can be provided and it will be suffixed for each stage: e.g.
+         *
+         * `classNames="fade"` applies `fade-height`, `fade-height-active`,
+         * `fade-width`, `fade-width-active`.
+         * Each individual classNames can also be specified independently like:
+         *
+         * ```js
+         * classNames={{
+         *  height: 'my-height',
+         *  heightActive: 'my-active-height',
+         *  width: 'my-width',
+         *  widthActive: 'my-active-width',
+         * }}
+         * ```
+         *
+         * @type {string | {
+         *  height?: string,
+         *  heightActive?: string,
+         *  width?: string,
+         *  widthActive?: string,
+         * }}
+         */
         classNames        : PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
-        component         : PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
-        enter             : PropTypes.bool,
-        exit              : PropTypes.bool,
+
+        /**
+         * A prop that enables or disables applying inline CSS styles and transitions to elements.
+         */
         inlineTransitions : PropTypes.bool,
+
+        /**
+         * The duration of the transition, in milliseconds.
+         * Required to properly apply transition CSS classes and inline styles.
+         */
         timeout           : PropTypes.number
     };
 

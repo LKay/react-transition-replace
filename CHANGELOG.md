@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - LICENSE file
 - Build for ES6 module
 - Build for browser
+- Docgen comments
 
 ### Changed
 - Update dependencies to enable React 16

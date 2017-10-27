@@ -32,6 +32,12 @@ module.exports = {
             commonjs2 : "prop-types",
             commonjs  : "prop-types",
             amd       : "prop-types"
+        },
+        "react-transition-group": {
+            root      : "ReactTransitionGroup",
+            commonjs2 : "react-transition-group",
+            commonjs  : "react-transition-group",
+            amd       : "react-transition-group"
         }
     },
 
