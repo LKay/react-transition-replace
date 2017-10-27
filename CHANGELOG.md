@@ -6,6 +6,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Added
+- CSS classes for width transitions
+- `inlineTransitions` flag to enable/disable injecting inline CSS for transitions
+- Storybook examples in favor of custom UI
+- LICENSE file
+- Build for ES6 module
+- Build for browser
+- Docgen comments
+
+### Changed
+- Update dependencies to enable React 16
+- Change the logic behind height/width transition to use timeouts and animation frames
+- Update README file
+
 ## 0.1.0 - 2017-09-06
 ### Added
 - Example of use with little demo

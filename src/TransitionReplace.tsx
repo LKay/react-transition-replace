@@ -2,6 +2,7 @@ import * as React from "react";
 import {
     cloneElement,
     Component,
+    ComponentClass,
     HTMLAttributes,
     ReactElement,
     ReactType,
@@ -11,23 +12,34 @@ import {
 } from "react";
 import * as PropTypes from "prop-types";
 import * as invariant from "invariant";
-import { TransitionActions, TransitionProps, EnterHandler, ExitHandler } from "react-transition-group/Transition";
-import * as classNames from "classnames";
+import { TransitionActions, TransitionProps } from "react-transition-group/Transition";
+import TransitionGroup from "react-transition-group/TransitionGroup";
 import { findDOMNode } from "react-dom";
-import raf = require("dom-helpers/util/requestAnimationFrame");
-import pick = require("lodash.pick");
+
+function isNil(obj: any) {
+    return obj === undefined || obj === null;
+}
+
+const DEFAULT_TRANSITION_TIMEOUT: number = 300;
 
 export interface TransitionReplaceClassNames {
     height?: string;
     heightActive?: string;
+    width?: string;
+    widthActive?: string;
 }
 
 export type ChildFactory = (child: ReactElement<any>) => ReactElement<any>;
 
 export interface TransitionReplaceBaseProps extends HTMLAttributes<any> {
+    appear?: boolean;
     changeWidth?: boolean;
     childFactory?: ChildFactory;
     classNames?: string | TransitionReplaceClassNames;
+    easing?: string;
+    enter?: boolean;
+    exit?: boolean;
+    inlineTransitions?: boolean;
     overflowHidden?: boolean;
     timeout?: number;
 }
@@ -47,17 +59,10 @@ export type TransitionReplaceProps<T extends keyof JSX.IntrinsicElements = "div"
 };
 
 export interface TransitionReplaceState {
-    currentChild: ReactElement<TransitionProps>;
-    currentKey: string;
-    height: number;
-    nextChild: ReactElement<TransitionProps>;
-    nextKey: string;
-    width: number;
-}
-
-function getNodeSize(node: Element): { height: number, width: number } {
-    const { height, width } = node ? node.getBoundingClientRect() : { height: 0, width: 0 };
-    return { height, width };
+    active: boolean;
+    height: string | number;
+    previousChild: ReactElement<TransitionProps>;
+    width: string | number;
 }
 
 function validateChildren(children: ReactNode): void {
@@ -83,25 +88,76 @@ function childFactory(child: ReactElement<any>): ReactElement<any> {
     return child;
 }
 
-export class TransitionReplace extends Component<TransitionReplaceProps, TransitionReplaceState> {
+/**
+ * The `<TransitionReplace>` component manages a set of `<Transition>` components
+ * in a list. Like with the `<Transition>` component, `<TransitionReplace>`, is a
+ * state machine for managing the mounting and unmounting of components over
+ * time.
+ *
+ * Consider the example below using the `Fade` CSS transition from before.
+ * As items are removed or added to the TodoList the `in` prop is toggled
+ * automatically by the `<TransitionReplace>`. You can use _any_ `<Transition>`
+ * component in a `<TransitionReplace>`, not just css.
+ *
+ * Note that `<TransitionReplace>`  does not define any animation behavior!
+ * Exactly _how_ a list item animates is up to the individual `<Transition>`
+ * components. This means you can mix and match animations across different
+ * list items.
+ */
+class TransitionReplace extends Component<TransitionReplaceProps, TransitionReplaceState> {
 
     static propTypes = {
-        appear         : PropTypes.bool,
-        changeWidth    : PropTypes.bool,
-        children       : PropTypes.node,
-        childFactory   : PropTypes.func,
-        classNames     : PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
-        component      : PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
-        enter          : PropTypes.bool,
-        exit           : PropTypes.bool,
-        overflowHidden : PropTypes.bool,
-        timeout        : PropTypes.number
+        ...(TransitionGroup as ComponentClass<any>).propTypes,
+
+        /**
+         * A prop that enables or disables width animations for the container.
+         */
+        changeWidth       : PropTypes.bool,
+
+        /**
+         * The animation classNames applied to the component as it enters or exits.
+         * A single name can be provided and it will be suffixed for each stage: e.g.
+         *
+         * `classNames="fade"` applies `fade-height`, `fade-height-active`,
+         * `fade-width`, `fade-width-active`.
+         * Each individual classNames can also be specified independently like:
+         *
+         * ```js
+         * classNames={{
+         *  height: 'my-height',
+         *  heightActive: 'my-active-height',
+         *  width: 'my-width',
+         *  widthActive: 'my-active-width',
+         * }}
+         * ```
+         *
+         * @type {string | {
+         *  height?: string,
+         *  heightActive?: string,
+         *  width?: string,
+         *  widthActive?: string,
+         * }}
+         */
+        classNames        : PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+
+        /**
+         * A prop that enables or disables applying inline CSS styles and transitions to elements.
+         */
+        inlineTransitions : PropTypes.bool,
+
+        /**
+         * The duration of the transition, in milliseconds.
+         * Required to properly apply transition CSS classes and inline styles.
+         */
+        timeout           : PropTypes.number
     };
 
     static defaultProps = {
         childFactory,
-        component : "div",
-        timeout   : 0
+        component         : "div",
+        easing            : "ease",
+        inlineTransitions : true,
+        timeout           : DEFAULT_TRANSITION_TIMEOUT
     };
 
     static childContextTypes = {
@@ -109,53 +165,71 @@ export class TransitionReplace extends Component<TransitionReplaceProps, Transit
     };
 
     state = {
-        currentChild     : undefined,
-        currentKey       : "1",
-        height           : null,
-        nextChild        : undefined,
-        nextKey          : null,
-        width            : null
+        active        : false,
+        height        : "auto",
+        width         : this.props.changeWidth ? "auto" : null,
+        previousChild : null
     } as TransitionReplaceState;
 
     private mounted: boolean = false;
-    private entering: boolean = false;
-    private exiting: boolean = false;
 
-    private refCurrent: ReactInstance = null;
-    private refNext: ReactInstance = null;
+    private refWrapper: ReactInstance;
+    private refChild: ReactInstance;
+    private refPreviousChild: ReactInstance;
 
-    private timeout: number = null;
-
-    private storedStyles: Pick<CSSStyleDeclaration, keyof CSSStyleDeclaration> = null;
+    private animationId: number;
+    private timeout: number;
 
     getChildContext() {
         return {
-            transitionGroup : { isMounting: !this.mounted }
+            transitionGroup : { isMounting : !this.mounted }
         };
     }
 
+    private getTransitionDuration(): number {
+        const {
+            children,
+            timeout
+        } = this.props;
+        const {
+            previousChild
+        } = this.state;
+
+        const child: ReactElement<TransitionProps> = children ? React.Children.only(children) : null;
+
+        return Math.max(
+            // Timeout for exit transition
+            isNil(previousChild)
+                ? 0
+                : (
+                    typeof previousChild.props.timeout === "number"
+                        ? previousChild.props.timeout
+                        : (
+                            !isNil(previousChild.props.timeout) ? (previousChild.props.timeout.exit || 0) : 0
+                        )
+                ),
+            // Timeout for enter transition
+            isNil(child)
+                ? 0
+                : (
+                    typeof child.props.timeout === "number"
+                        ? child.props.timeout
+                        : (
+                            !isNil(child.props.timeout) ? (child.props.timeout.enter || 0) : 0
+                        )
+                ),
+            // Timeout specified on TransactionReplace
+            timeout
+        );
+    }
+
     componentWillMount() {
-        const { children } = this.props;
-
-        validateChildren(children);
-
-        if (children) {
-            let currentChild: ReactElement<TransitionProps> = React.Children.only(children);
-
-            currentChild = cloneElement<TransitionProps, Partial<TransitionProps>>(currentChild, {
-                in     : true,
-                appear : this.getProp(currentChild, "appear"),
-                enter  : this.getProp(currentChild, "enter"),
-                exit   : this.getProp(currentChild, "exit")
-            });
-
-            // Initial child should be entering, dependent on appear
-            this.setState({ currentChild });
-        }
+        validateChildren(this.props.children);
     }
 
     componentWillUnmount() {
-        this.cancelTransition();
+        clearTimeout(this.timeout);
+        cancelAnimationFrame(this.animationId);
         this.mounted = false;
     }
 
@@ -163,293 +237,165 @@ export class TransitionReplace extends Component<TransitionReplaceProps, Transit
         this.mounted = true;
     }
 
-    componentDidUpdate() {
-        if (this.exiting || this.entering) {
-            this.enqueueHeightTransition();
-        }
-    }
-
     componentWillReceiveProps(nextProps: TransitionReplaceProps) {
         validateChildren(nextProps.children);
 
-        const { changeWidth } = this.props;
-        const { currentChild } = this.state;
+        const {
+            changeWidth,
+            children,
+            inlineTransitions
+        } = this.props;
 
-        const nextChild: ReactElement<TransitionProps> = nextProps.children
-            ? React.Children.only(nextProps.children)
-            : undefined;
-
-        const state: Pick<TransitionReplaceState, keyof TransitionReplaceState> = {} as any;
-
-        // The container was empty before and the entering element is being removed again
-        if (!nextChild && !currentChild) {
+        if (children === nextProps.children) {
             return;
         }
 
-        if (currentChild) {
-            const { height, width } = getNodeSize(findDOMNode(this.refCurrent));
-            state.height = height;
-            state.width = changeWidth ? width : null;
-        }
+        const nodeWrapper = findDOMNode<HTMLElement>(this.refWrapper);
 
-        // item hasn't changed transition states
-        // copy over the last transition props
-        if (nextChild && currentChild && currentChild.key === nextChild.key) {
-            state.currentChild = cloneElement<TransitionProps, Partial<TransitionProps>>(nextChild, {
-                in    : currentChild.props.in,
-                enter : this.getProp(nextChild, "enter", nextProps),
-                exit  : this.getProp(nextChild, "exit", nextProps)
-            });
-        }
-        // no new item so remove current (exiting)
-        else if (!nextChild && currentChild && currentChild.props.in) {
-            this.exiting = true;
-            state.currentChild = cloneElement<TransitionProps, Partial<TransitionProps>>(currentChild, {
-                in : false
-            });
-            state.nextChild = undefined;
-        }
-        //
-        else if (nextChild) {
-            this.entering = true;
+        this.setState({
+            height        : nodeWrapper.offsetHeight,
+            previousChild : children ? React.Children.only(children) : null,
+            width         : changeWidth ? nodeWrapper.offsetWidth : null
+        });
 
-            state.nextChild = cloneElement<TransitionProps, Partial<TransitionProps>>(nextChild, {
-                in    : true,
-                enter : this.getProp(nextChild, "enter", nextProps),
-                exit  : this.getProp(nextChild, "exit", nextProps)
-            });
+        cancelAnimationFrame(this.animationId);
 
-            if (currentChild) {
-                this.exiting = true;
-                state.currentChild = cloneElement<TransitionProps, Partial<TransitionProps>>(currentChild, {
-                    in    : false
-                });
-            } else {
-                state.height = 0;
-            }
-        }
-
-        this.setState(state);
-    }
-
-    private addEnterStyles(node: HTMLElement): void {
-        if (this.mounted) {
-            this.storedStyles = pick(node.style, "position", "top", "left", "width");
-            node.style.position = "absolute";
-            node.style.top = "0";
-            node.style.left = "0";
-            node.style.width = "100%";
-        }
-    }
-
-    private removeEnterStyles(node: HTMLElement): void {
-        if (this.mounted) {
-            Object.keys(this.storedStyles)
-                .forEach((prop: keyof CSSStyleDeclaration) => node.style.setProperty(prop, this.storedStyles[prop]));
-        }
-    }
-
-    private enqueueHeightTransition(): void {
-        if (!this.timeout) {
-            this.timeout = raf(this.performHeightTransition);
-        }
-    }
-
-    private performHeightTransition = () => {
-        if (this.mounted) {
-            const { changeWidth } = this.props;
-            const { nextChild } = this.state;
-            const nextNode = nextChild ? findDOMNode(this.refNext) : null;
-            const { height, width } = getNodeSize(nextNode);
+        this.animationId = requestAnimationFrame(() => {
+            const nodeChild = findDOMNode<HTMLElement>(this.refChild);
 
             this.setState({
-                height,
-                width : changeWidth ? width : null
-            });
-        }
-        window.clearTimeout(this.timeout);
-        this.timeout = null;
-    }
+                active : true,
+                height : nodeChild ? nodeChild.offsetHeight : 0,
+                width  : changeWidth
+                    ? (nodeChild ? nodeChild.offsetWidth : 0)
+                    : null
+            }, () => {
+                const nodePreviousChild = findDOMNode<HTMLElement>(this.refPreviousChild);
 
-    private cancelTransition() {
-        this.entering = false;
-        this.exiting = false;
-        window.clearTimeout(this.timeout);
-        this.timeout = null;
-        this.setState({
-            nextChild        : undefined,
-            height           : null,
-            width            : null
+                if (nodePreviousChild && inlineTransitions) {
+                    nodePreviousChild.style.position = "absolute";
+                    nodePreviousChild.style.top = "0";
+                    nodePreviousChild.style.left = "0";
+                    nodePreviousChild.style.width = "100%";
+                }
+            });
+
+            clearTimeout(this.timeout);
+
+            this.timeout = setTimeout(() => {
+                this.setState({
+                    active        : false,
+                    height        : "auto",
+                    previousChild : null,
+                    width         : changeWidth ? "auto" : null
+                });
+            }, this.getTransitionDuration());
         });
     }
 
-    private handleExitCurrent(handler: ExitHandler): ExitHandler {
-        return (node: HTMLElement) => {
-            this.exiting = true;
-            if (typeof handler === "function") {
-                handler(node);
-            }
-        };
+    private getClassName(): string {
+        const {
+            changeWidth,
+            className,
+            classNames : classes
+        } = this.props;
+
+        const {
+            active
+        } = this.state;
+
+        if (!classes) {
+            return className;
+        }
+
+        const heightClassName = (typeof classes === "object" && classes !== null)
+            ? classes.height || ""
+            : `${classes}-height`;
+
+        const activeHeightClassName = (typeof classes === "object" && classes !== null)
+            ? classes.heightActive || ""
+            : `${heightClassName}-active`;
+
+        const widthClassName = (typeof classes === "object" && classes !== null)
+            ? classes.width || ""
+            : `${classes}-width`;
+
+        const activeWidthClassName = (typeof classes === "object" && classes !== null)
+            ? classes.widthActive || ""
+            : `${widthClassName}-active`;
+
+        return [
+            className,
+            heightClassName,
+            active ? activeHeightClassName : null,
+            changeWidth ? widthClassName : null,
+            changeWidth && active ? activeWidthClassName : null
+        ]
+            .filter((v: string) => !!v)
+            .join(" ");
     }
 
-    private handleExitedCurrent(handler: ExitHandler): ExitHandler {
-        return (node: HTMLElement) => {
-            this.exiting = false;
-
-            if (!this.entering) {
-                if (!this.state.nextChild) {
-                    this.entering = false;
-                    return this.setState({
-                        currentChild : undefined,
-                        height       : null,
-                        width        : null
-                    });
-                }
-
-                this.setState({
-                    currentChild : undefined
-                }, () => {
-                    if (typeof handler === "function") {
-                        handler(node);
-                    }
-                });
-            }
-        };
-    }
-
-    private handleEnterNext(handler: EnterHandler): EnterHandler {
-        return (node: HTMLElement, isAppearing: boolean) => {
-            this.entering = true;
-            this.addEnterStyles(node);
-            if (typeof handler === "function") {
-                handler(node, isAppearing);
-            }
-        };
-    }
-
-    private handleEnteredNext(handler: EnterHandler): EnterHandler {
-        return (node: HTMLElement, isAppearing: boolean) => {
-            this.entering = false;
-            this.removeEnterStyles(node);
-
-            if (!this.exiting) {
-                if (!isAppearing) {
-                    this.setState({
-                        currentChild: this.state.nextChild,
-                        height: null,
-                        nextChild: undefined,
-                        width: null
-                    }, () => {
-                        if (typeof handler === "function") {
-                            handler(node, isAppearing);
-                        }
-                    });
-                } else if (typeof handler === "function") {
-                    handler(node, isAppearing);
-                }
-            }
-        };
-    }
-
-    // use child config unless explictly set by the TransitionReplace component
-    private getProp(child: ReactElement<TransitionProps>,
-                    prop: keyof TransitionActions,
-                    props: TransitionReplaceProps = this.props) {
-        return props[prop] !== null ? props[prop] : child.props[prop];
+    // use child config unless explicitly set by the TransitionReplace component
+    private getProp(child: ReactElement<TransitionProps>, prop: keyof TransitionActions) {
+        return this.props[prop] !== null ? this.props[prop] : child.props[prop];
     }
 
     render() {
         const {
-            appear,
             changeWidth,
-            childFactory,
-            classNames : classes,
-            component : Component,
-            enter,
-            exit,
-            overflowHidden,
-            timeout,
-            ...props
+            children,
+            component: Component,
+            easing,
+            inlineTransitions,
+            overflowHidden
         } = this.props;
+
         const {
-            currentChild,
+            active,
             height,
-            nextChild,
             width
         } = this.state;
 
-        const children: Array<ReactElement<TransitionProps>> = [];
-        let style: CSSProperties = props.style;
-        let className: string = props.className;
+        const currentChild = children ? React.Children.only(children) : null;
+        const child = children ? cloneElement(currentChild, {
+            appear : this.getProp(currentChild, "appear"),
+            enter  : this.getProp(currentChild, "enter"),
+            exit   : this.getProp(currentChild, "exit"),
+            in     : true,
+            ref    : (child: ReactInstance) => this.refChild = child
+        }) : null;
 
-        if (currentChild) {
-            children.push(
-                cloneElement<TransitionProps, Partial<TransitionProps>>(currentChild, {
-                    onExit   : this.handleExitCurrent(currentChild.props.onExit),
-                    onExited : this.handleExitedCurrent(currentChild.props.onExited),
-                    key      : currentChild.key || "current",
-                    ref      : (current: ReactInstance) => this.refCurrent = current
-                })
-            );
-        }
+        const previousChild = this.state.previousChild
+            ? cloneElement<TransitionProps, Partial<TransitionProps>>(this.state.previousChild, {
+                enter : this.getProp(currentChild, "enter"),
+                exit  : this.getProp(this.state.previousChild, "exit"),
+                in    : false,
+                ref   : (child: ReactInstance) => this.refPreviousChild = child
+            })
+            : null;
 
-        if (nextChild) {
-            children.push(
-                cloneElement<TransitionProps, Partial<TransitionProps>>(nextChild, {
-                    onEnter   : this.handleEnterNext(nextChild.props.onEnter),
-                    onEntered : this.handleEnteredNext(nextChild.props.onEntered),
-                    key       : nextChild.key || "next",
-                    ref       : (next: ReactInstance) => this.refNext = next
-                })
-            );
-        }
-
-        if (height !== null) {
-            style = {
-                ...style,
-                display  : "block",
-                height,
-                position : "relative",
-                width    : "100%"
-            };
-
-            if (!classes) {
-                style = { ...style, transition : `height ${timeout}ms linear` };
-            } else {
-                const heightClassName = (typeof classes === "object" && classes !== null)
-                    ? classes.height || ""
-                    : `${classes}-height`;
-
-                const activeHeightClassName = (typeof classes === "object" && classes !== null)
-                    ? classes.heightActive || ""
-                    : `${heightClassName}-active`;
-
-                className = classNames(
-                    className,
-                    heightClassName,
-                    nextChild && (this.entering || this.exiting) ? activeHeightClassName : null
-                );
-            }
-
-            if (overflowHidden) {
-                style = { ...style, overflow : "hidden" };
-            }
-
-            if (changeWidth) {
-                style = { ...style, width };
-            }
-        }
+        const wrapperStyles: CSSProperties = {
+            height,
+            overflow                 : overflowHidden ? "hidden" : "visible",
+            position                 : "relative",
+            transitionProperty       : active && inlineTransitions ? `height ${changeWidth ? ", width " : null}` : null,
+            transitionTimingFunction : active && inlineTransitions ? easing : null,
+            transitionDuration       : active && inlineTransitions ? `${this.getTransitionDuration()}ms` : null,
+            width                    : changeWidth ? width : null
+        };
 
         return (
             <Component
-                { ...props }
-                className={ className }
-                style={ style }
+                className={ this.getClassName() }
+                ref={ (wrapper: ReactInstance) => this.refWrapper = wrapper }
+                style={ wrapperStyles }
             >
-                { children.map(childFactory) }
+                { child }
+                { previousChild }
             </Component>
         );
     }
+
 }
 
 export default TransitionReplace;

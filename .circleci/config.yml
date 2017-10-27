@@ -81,13 +81,10 @@ jobs:
                     - node_modules-{{ checksum "package.json" }}
             - run:
                 command: |
-                    versions=`npm info $CIRCLE_PROJECT_REPONAME versions | grep -o -E '\d+(\.\d+){2}(-(alpha|beta)(\d+)?)?'`
-                    if [[ ! ${versions[*]} =~ "$CIRCLE_TAG" ]];
-                    then
-                        echo -e "$NPM_USERNAME\n$NPM_PASSWORD\n$NPM_EMAIL" | npm login
-                        npm publish
-                        npm logout
-                    fi;
+                    echo -e "$NPM_USERNAME\n$NPM_PASSWORD\n$NPM_EMAIL" | npm login
+                    npm publish lib
+                    npm logout
+
 workflows:
     version: 2
 
