@@ -1,1 +1,2 @@
 import "./TransitionReplace";
+import "./SwitchTransition";

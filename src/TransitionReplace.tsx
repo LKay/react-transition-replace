@@ -268,7 +268,7 @@ class TransitionReplace extends Component<TransitionReplaceProps, TransitionRepl
 
         this.setState({
             height        : nodeWrapper.offsetHeight,
-            previousChild : children ? React.Children.only(children) : null,
+            previousChild : child,
             width         : changeWidth ? nodeWrapper.offsetWidth : null
         });
 
@@ -380,9 +380,9 @@ class TransitionReplace extends Component<TransitionReplaceProps, TransitionRepl
             ref    : (child: ReactInstance) => this.refChild = child
         }) : null;
 
-        const previousChild = this.state.previousChild
+        const previousChild = this.state.previousChild && (!child || this.state.previousChild.key !== child.key)
             ? cloneElement<TransitionProps, Partial<TransitionProps>>(this.state.previousChild, {
-                enter : this.getProp(currentChild, "enter"),
+                enter : this.getProp(this.state.previousChild, "enter"),
                 exit  : this.getProp(this.state.previousChild, "exit"),
                 in    : false,
                 ref   : (child: ReactInstance) => this.refPreviousChild = child
@@ -403,7 +403,7 @@ class TransitionReplace extends Component<TransitionReplaceProps, TransitionRepl
             <Component
                 className={ this.getClassName() }
                 ref={ (wrapper: ReactInstance) => this.refWrapper = wrapper }
-                style={ wrapperStyles }
+                style={ active ? wrapperStyles : null }
             >
                 { childFactory(child) }
                 { childFactory(previousChild) }

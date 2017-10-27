@@ -1,0 +1,12 @@
+[
+    {
+        "componentChunkName": "component---cache-dev-404-page-js",
+        "jsonName": "dev-404-page.json",
+        "path": "/dev-404-page/"
+    },
+    {
+        "componentChunkName": "component---src-pages-index-tsx",
+        "jsonName": "index.json",
+        "path": "/"
+    }
+]
