@@ -20,7 +20,7 @@ function isNil(obj: any) {
     return obj === undefined || obj === null;
 }
 
-const DEFAULT_TRANSITION_TIMEOUT: number = 300;
+const DEFAULT_TRANSITION_TIMEOUT: number = 0;
 
 export interface TransitionReplaceClassNames {
     height?: string;
@@ -256,7 +256,11 @@ class TransitionReplace extends Component<TransitionReplaceProps, TransitionRepl
             inlineTransitions
         } = this.props;
 
-        if (children === nextProps.children) {
+        const { previousChild } = this.state;
+
+        const child: ReactElement<TransitionProps> = children ? React.Children.only(children) : null;
+
+        if (children === nextProps.children || (child && previousChild && child.key === previousChild.key)) {
             return;
         }
 
@@ -354,6 +358,7 @@ class TransitionReplace extends Component<TransitionReplaceProps, TransitionRepl
         const {
             changeWidth,
             children,
+            childFactory,
             component: Component,
             easing,
             inlineTransitions,
@@ -400,8 +405,8 @@ class TransitionReplace extends Component<TransitionReplaceProps, TransitionRepl
                 ref={ (wrapper: ReactInstance) => this.refWrapper = wrapper }
                 style={ wrapperStyles }
             >
-                { child }
-                { previousChild }
+                { childFactory(child) }
+                { childFactory(previousChild) }
             </Component>
         );
     }
