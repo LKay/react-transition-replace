@@ -141,6 +141,11 @@ class TransitionReplace extends Component<TransitionReplaceProps, TransitionRepl
         classNames        : PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
 
         /**
+         * Defines transition timing function that will be applied to inline CSS styles.
+         */
+        easing : PropTypes.string,
+
+        /**
          * A prop that enables or disables applying inline CSS styles and transitions to elements.
          */
         inlineTransitions : PropTypes.bool,
