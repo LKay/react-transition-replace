@@ -151,6 +151,11 @@ class TransitionReplace extends Component<TransitionReplaceProps, TransitionRepl
         inlineTransitions : PropTypes.bool,
 
         /**
+         * A prop that if set to `true` will add `overfolow: hidden` CSS style to the container.
+         */
+        overflowHidden : PropTypes.bool,
+
+        /**
          * The duration of the transition, in milliseconds.
          * Required to properly apply transition CSS classes and inline styles.
          */
