@@ -13,7 +13,7 @@ import {
 import * as PropTypes from "prop-types";
 import * as invariant from "invariant";
 import { TransitionActions, TransitionProps } from "react-transition-group/Transition";
-import TransitionGroup from "react-transition-group/TransitionGroup";
+import { TransitionGroupProps } from "react-transition-group/TransitionGroup";
 import { findDOMNode } from "react-dom";
 
 function isNil(obj: any) {
@@ -31,32 +31,14 @@ export interface TransitionReplaceClassNames {
 
 export type ChildFactory = (child: ReactElement<any>) => ReactElement<any>;
 
-export interface TransitionReplaceBaseProps extends HTMLAttributes<any> {
-    appear?: boolean;
+export type TransitionReplaceProps = TransitionGroupProps & {
     changeWidth?: boolean;
-    childFactory?: ChildFactory;
     classNames?: string | TransitionReplaceClassNames;
     easing?: string;
-    enter?: boolean;
-    exit?: boolean;
     inlineTransitions?: boolean;
     overflowHidden?: boolean;
     timeout?: number;
-}
-
-export interface IntrinsicTransitionReplaceProps<T extends keyof JSX.IntrinsicElements = "div">
-    extends TransitionActions, TransitionReplaceBaseProps {
-    component?: T;
-}
-
-export interface ComponentTransitionReplaceProps<T extends ReactType> extends TransitionActions, TransitionReplaceBaseProps {
-    component: T;
-}
-
-export type TransitionReplaceProps<T extends keyof JSX.IntrinsicElements = "div", V extends ReactType = any> =
-    (IntrinsicTransitionReplaceProps<T> & JSX.IntrinsicElements[T]) | (ComponentTransitionReplaceProps<V>) & {
-    children?: ReactElement<TransitionProps>;
-};
+} & React.HTMLProps<any>;
 
 export interface TransitionReplaceState {
     active: boolean;
@@ -84,7 +66,7 @@ function validateChildren(children: ReactNode): void {
     }
 }
 
-function childFactory(child: ReactElement<any>): ReactElement<any> {
+function defaultChildFactory(child: ReactElement<any>): ReactElement<any> {
     return child;
 }
 
@@ -103,12 +85,13 @@ function childFactory(child: ReactElement<any>): ReactElement<any> {
  * Exactly _how_ a list item animates is up to the individual `<Transition>`
  * components. This means you can mix and match animations across different
  * list items.
+ *
+ * The `<TransitionReplace>` takes the same props as [`<TransitionGroup>`](https://reactcommunity.org/react-transition-group/#TransitionGroup)
+ * and additionally accepts the following:
  */
-class TransitionReplace extends Component<TransitionReplaceProps, TransitionReplaceState> {
+export default class TransitionReplace extends Component<TransitionReplaceProps, TransitionReplaceState> {
 
     static propTypes = {
-        ...(TransitionGroup as ComponentClass<any>).propTypes,
-
         /**
          * A prop that enables or disables width animations for the container.
          */
@@ -127,7 +110,7 @@ class TransitionReplace extends Component<TransitionReplaceProps, TransitionRepl
          *  height: 'my-height',
          *  heightActive: 'my-active-height',
          *  width: 'my-width',
-         *  widthActive: 'my-active-width',
+         *  widthActive: 'my-active-width'
          * }}
          * ```
          *
@@ -135,7 +118,7 @@ class TransitionReplace extends Component<TransitionReplaceProps, TransitionRepl
          *  height?: string,
          *  heightActive?: string,
          *  width?: string,
-         *  widthActive?: string,
+         *  widthActive?: string
          * }}
          */
         classNames        : PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
@@ -163,10 +146,10 @@ class TransitionReplace extends Component<TransitionReplaceProps, TransitionRepl
     };
 
     static defaultProps = {
-        childFactory,
-        component         : "div",
+        changeWidth       : false,
         easing            : "ease",
         inlineTransitions : true,
+        overflowHidden    : false,
         timeout           : DEFAULT_TRANSITION_TIMEOUT
     };
 
@@ -358,8 +341,8 @@ class TransitionReplace extends Component<TransitionReplaceProps, TransitionRepl
         const {
             changeWidth,
             children,
-            childFactory,
-            component: Component,
+            childFactory = defaultChildFactory,
+            component: Component = "div",
             easing,
             inlineTransitions,
             overflowHidden
@@ -412,5 +395,3 @@ class TransitionReplace extends Component<TransitionReplaceProps, TransitionRepl
     }
 
 }
-
-export default TransitionReplace;

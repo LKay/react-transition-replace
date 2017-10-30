@@ -14,7 +14,8 @@
     "lint": "tslint --project tsconfig.json",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
-    "prepublishOnly": "cp ./package.json lib"
+    "prepublishOnly": "cp ./package.json lib",
+    "deploy-docs": "npm -C www run deploy"
   },
   "repository": {
     "type": "git",
