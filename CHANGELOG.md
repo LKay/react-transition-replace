@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
+
+## 0.2.2 - 2017-10-30
 ### Added
 - Docs based on Gatsby
 - `SwitchTransition` component for `react-router` integration
@@ -60,7 +62,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Initial code for the module
 
 ## Compare
-- [Unreleased](https://github.com/LKay/react-transition-replace/compare/0.1.0...HEAD)
+- [Unreleased](https://github.com/LKay/react-transition-replace/compare/0.2.2...HEAD)
+- [0.2.2](https://github.com/LKay/react-transition-replace/compare/0.2.1...0.2.2)
+- [0.2.1](https://github.com/LKay/react-transition-replace/compare/0.2.0...0.2.1)
+- [0.2.0](https://github.com/LKay/react-transition-replace/compare/0.1.0...0.2.0)
 - [0.1.0](https://github.com/LKay/react-transition-replace/compare/0.0.3...0.1.0)
 - [0.0.3](https://github.com/LKay/react-transition-replace/compare/0.0.2...0.0.3)
 - [0.0.2](https://github.com/LKay/react-transition-replace/compare/0.0.1...0.0.2)
