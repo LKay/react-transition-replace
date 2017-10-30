@@ -5,17 +5,34 @@ import { Switch, SwitchProps, matchPath } from "react-router";
 import { TransitionProps } from "react-transition-group/Transition";
 import { CSSTransitionProps } from "react-transition-group/CSSTransition";
 import * as PropTypes from "prop-types";
-import TransitionReplace, { TransitionReplaceProps } from "../TransitionReplace";
-import { Omit } from "../types";
 import * as invariant from "invariant";
 import * as warning from "warning";
-import pick from "lodash.pick";
+import TransitionReplace, { TransitionReplaceProps } from "./TransitionReplace";
+import { Omit } from "./types";
 
 export type SwitchTransitionProps = SwitchProps & TransitionReplaceProps & Omit<CSSTransitionProps, "in"> & {
     transition: ComponentType<Partial<TransitionProps | CSSTransitionProps>>;
     [prop: string]: any;
 };
 
+/**
+ * The `<TransitionReplace>` component manages a set of `<Transition>` components
+ * in a list. Like with the `<Transition>` component, `<TransitionReplace>`, is a
+ * state machine for managing the mounting and unmounting of components over
+ * time.
+ *
+ * Consider the example below using the `Fade` CSS transition from before.
+ * As items are removed or added to the TodoList the `in` prop is toggled
+ * automatically by the `<TransitionReplace>`. You can use _any_ `<Transition>`
+ * component in a `<TransitionReplace>`, not just css.
+ *
+ * Note that `<TransitionReplace>`  does not define any animation behavior!
+ * Exactly _how_ a list item animates is up to the individual `<Transition>`
+ * components. This means you can mix and match animations across different
+ * list items.
+ *
+ * Here is test [Test](http://google.com)
+ */
 export default class SwitchTransition extends Component<SwitchTransitionProps> {
 
     static contextTypes = {
@@ -67,7 +84,6 @@ export default class SwitchTransition extends Component<SwitchTransitionProps> {
             onEnter,
             onEntering,
             addEndListener,
-
             location : propLocation,
             ...props
         } = this.props;

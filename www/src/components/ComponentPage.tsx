@@ -22,8 +22,6 @@ class ComponentPage extends Component<any> {
     render() {
         const { metadata } = this.props;
 
-        console.warn(this.props);
-
         return (
             <div>
                 <h2 id={metadata.displayName}><a href={`#${metadata.displayName}`}>

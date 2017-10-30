@@ -20,9 +20,7 @@ class Index extends Component<IndexProps> {
     }
 
     render() {
-        console.warn(this.props);
-
-        const { data: { transitionReplace } } = this.props;
+        const { data: { transitionReplace, switchTransition } } = this.props;
 
         return (
             <div className="container" style={{ marginTop: "2rem" }}>
@@ -53,6 +51,7 @@ yarn add react-transition-replace
                 </section>
                 <h2>Components</h2>
                 <ComponentPage metadata={ transitionReplace } />
+                <ComponentPage metadata={ switchTransition } />
             </div>
         );
     }
@@ -63,6 +62,9 @@ export default Index;
 export const pageQuery = graphql`
   query Components {
     transitionReplace: componentMetadata(displayName: { eq: "TransitionReplace" }) {
+      ...ComponentPage_metadata
+    }
+    switchTransition: componentMetadata(displayName: { eq: "SwitchTransition" }) {
       ...ComponentPage_metadata
     }
   }
