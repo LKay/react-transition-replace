@@ -2,8 +2,9 @@ import * as React from "react";
 import {
     cloneElement,
     Component,
-    ReactElement,
     CSSProperties,
+    HTMLProps,
+    ReactElement,
     ReactNode,
     ReactInstance
 } from "react";
@@ -28,14 +29,14 @@ export interface TransitionReplaceClassNames {
 
 export type ChildFactory = (child: ReactElement<any>) => ReactElement<any>;
 
-export type TransitionReplaceProps = TransitionGroupProps & {
+export type TransitionReplaceProps = TransitionGroupProps & HTMLProps<any> & {
     changeWidth?: boolean;
     classNames?: string | TransitionReplaceClassNames;
     easing?: string;
     inlineTransitions?: boolean;
     overflowHidden?: boolean;
     timeout?: number;
-} & React.HTMLProps<any>;
+};
 
 export interface TransitionReplaceState {
     active: boolean;
