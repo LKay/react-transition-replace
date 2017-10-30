@@ -5,6 +5,8 @@
 [![CircleCI](https://img.shields.io/circleci/project/github/LKay/react-transition-replace/master.svg?style=flat-square)](https://circleci.com/gh/LKay/react-transition-replace/tree/master)
 [![Coveralls](https://img.shields.io/coveralls/LKay/react-transition-replace/master.svg?style=flat-square)](https://coveralls.io/github/LKay/react-transition-replace)
 
+#### [WIP] Doc: https://lkay.github.io/react-transition-replace/
+
 The `react-transition-replace` is a rewrite of widely used library [`react-css-transition-replace`](https://github.com/marnusw/react-css-transition-replace) so it is compatible with version **2.x.x** of the [`react-transition-group`](https://github.com/reactjs/react-transition-group).
 
 While `react-transition-group` does a great job of animating changes to a list of components or a single component proper handling of the container height when animating single component replacement is not built in. This component is designed to do exactly that with an API closely following that of `TransitionGroup`.
