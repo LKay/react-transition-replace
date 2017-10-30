@@ -1,0 +1,20 @@
+{
+  "assetsByChunkName": {
+    "path---index": [
+      "path---index-c1042e21aa3444511ebe.js",
+      "path---index-c1042e21aa3444511ebe.js.map"
+    ],
+    "commons": [
+      "commons-da587e1df5d1731ee55d.js",
+      "commons-da587e1df5d1731ee55d.js.map"
+    ],
+    "component---src-pages-index-tsx": [
+      "component---src-pages-index-tsx-de8280d61e634830df0b.js",
+      "component---src-pages-index-tsx-de8280d61e634830df0b.js.map"
+    ],
+    "app": [
+      "app-7126952307209382ccdb.js",
+      "app-7126952307209382ccdb.js.map"
+    ]
+  }
+}
