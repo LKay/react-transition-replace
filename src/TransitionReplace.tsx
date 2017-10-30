@@ -276,13 +276,13 @@ class TransitionReplace extends Component<TransitionReplaceProps, TransitionRepl
 
         this.animationId = requestAnimationFrame(() => {
             const nodeChild = findDOMNode<HTMLElement>(this.refChild);
+            const height = nodeChild ? nodeChild.offsetHeight : 0;
+            const width = nodeChild ? nodeChild.offsetWidth : 0;
 
             this.setState({
                 active : true,
-                height : nodeChild ? nodeChild.offsetHeight : 0,
-                width  : changeWidth
-                    ? (nodeChild ? nodeChild.offsetWidth : 0)
-                    : null
+                height,
+                width  : changeWidth ? width : null
             }, () => {
                 const nodePreviousChild = findDOMNode<HTMLElement>(this.refPreviousChild);
 
@@ -406,7 +406,7 @@ class TransitionReplace extends Component<TransitionReplaceProps, TransitionRepl
                 style={ active ? wrapperStyles : null }
             >
                 { childFactory(child) }
-                { childFactory(previousChild) }
+                { previousChild && childFactory(previousChild) }
             </Component>
         );
     }
