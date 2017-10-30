@@ -14,7 +14,8 @@
     "lint": "tslint --project tsconfig.json",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
-    "prepublishOnly": "cp ./package.json lib"
+    "prepublishOnly": "cp ./package.json lib",
+    "deploy-docs": "npm -C www run deploy"
   },
   "repository": {
     "type": "git",
@@ -25,7 +26,8 @@
     "transition",
     "replace",
     "animation",
-    "css"
+    "css",
+    "router"
   ],
   "author": "Karol Janyst <lapkom@gmail.com>",
   "license": "MIT",
@@ -36,12 +38,13 @@
   "dependencies": {
     "invariant": "^2.2.2",
     "prop-types": "^15.6.0",
-    "react-transition-group": "^2.2.1"
+    "warning": "^3.0.0"
   },
   "devDependencies": {
     "@storybook/addon-actions": "^3.2.13",
     "@storybook/react": "^3.2.13",
     "@types/lorem-ipsum": "^1.0.2",
+    "@types/react-router-dom": "^4.0.8",
     "@types/storybook__addon-actions": "^3.0.1",
     "@types/storybook__addon-info": "^3.2.0",
     "@types/storybook__react": "^3.0.5",
@@ -50,11 +53,13 @@
     "node-sass": "^4.5.3",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
+    "react-router-dom": "^4.2.2",
     "react-transition-group": "^2.2.1",
     "release": "^2.5.2",
     "rimraf": "^2.6.2",
     "sass-loader": "^6.0.6",
     "source-map-loader": "^0.2.3",
+    "storybook-router": "^0.3.1",
     "tslint": "^5.8.0",
     "tslint-react": "^3.2.0",
     "typescript": "^2.5.3",
@@ -66,7 +71,8 @@
     "@types/prop-types": "^15.5.2",
     "@types/react": ">=15",
     "@types/react-dom": ">=15",
-    "@types/react-transition-group": "^2.0.6"
+    "@types/react-transition-group": "^2.0.6",
+    "@types/warning": "^3.0.0"
   },
   "peerDependencies": {
     "react": ">=15",
