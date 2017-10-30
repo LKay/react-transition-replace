@@ -31,7 +31,7 @@ class Index extends Component<IndexProps> {
 
                     </p>
                     <h3 className="h4">Installation</h3>
-                    <pre>
+<pre>
 <code>{`
 # npm
 npm install react-transition-replace --save

@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npm -C ../ run build:es && gatsby build",
+    "build": "npm -C ../ run build:es -- -t es6 && gatsby build",
     "deploy": "npm run build && gh-pages -d public",
-    "start": "npm -C ../ run build:es && gatsby develop"
+    "start": "npm -C ../ run build:es -- -t es6 && gatsby develop"
   },
   "author": "",
   "license": "MIT",

@@ -87,7 +87,7 @@ class ComponentPage extends Component<any> {
             case 'function':
                 return 'Function';
             case 'elementType':
-                return 'ReactClass<any>';
+                return 'ReactClass<any> | StatelessComponent<any>';
             case 'dateFormat':
                 return 'string | (date: Date, culture: ?string, localizer: Localizer) => string';
             case 'dateRangeFormat':

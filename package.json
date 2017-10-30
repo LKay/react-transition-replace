@@ -7,7 +7,7 @@
   "scripts": {
     "build": "rimraf lib && npm run build:lib && npm run build:es && npm run build:dist && cp README.md LICENSE ./lib",
     "build:lib": "tsc",
-    "build:es": "rimraf lib/es && tsc -m es6 -t es6 --outDir ./lib/es",
+    "build:es": "rimraf lib/es && tsc -m es6 --outDir ./lib/es",
     "build:dist": "rimraf lib/dist && webpack && NODE_ENV=production webpack -p",
     "test": "npm run lint",
     "coverage": "echo \"Not implemented\" && exit 0",

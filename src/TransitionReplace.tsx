@@ -75,8 +75,8 @@ function defaultChildFactory(child: ReactElement<any>): ReactElement<any> {
  * state machine for managing the mounting and unmounting of components over
  * time.
  *
- * Consider the example below using the `Fade` CSS transition from before.
- * As items are removed or added to the TodoList the `in` prop is toggled
+ * Consider the example below using the `Fade` CSS transition.
+ * As child item changes in the `BasicExample` the `in` prop is toggled
  * automatically by the `<TransitionReplace>`. You can use _any_ `<Transition>`
  * component in a `<TransitionReplace>`, not just css.
  *
@@ -84,6 +84,60 @@ function defaultChildFactory(child: ReactElement<any>): ReactElement<any> {
  * Exactly _how_ a list item animates is up to the individual `<Transition>`
  * components. This means you can mix and match animations across different
  * list items.
+ *
+ * ```jsx
+ * import React from 'react';
+ * import { Route } from 'react-router';
+ * import CSSTransition from 'react-transition-group';
+ * import { SwitchTransition } from 'react-transaction-replace';
+ *
+ * const Fade = ({ children, ...props }) => (
+ *     <CSSTransition
+ *         { ...props }
+ *         timeout={ 300 }
+ *         className="fade"
+ *     >
+ *         { children }
+ *     </CSSTransition>
+ * );
+ *
+ * Fade.defaultProps = {
+ *     in      : false,
+ *     timeout : 300
+ * }
+ *
+ * function random() {
+ *     return Math.random().toString(36).substring(7);
+ * }
+ *
+ * class BasicExample extends React.Component {
+ *
+ *     state = {
+ *         key : random()
+ *     }
+ *
+ *     handleClick() {
+ *         this.setState({ key : random() })
+ *     }
+ *
+ *     render() {
+ *         return (
+ *             <div>
+ *                 <button onClick={ this.handleClick.bind(this) }>Change</button>
+ *
+ *                 <TransitionReplace
+ *                     transition={ Fade }
+ *                 >
+ *                     <Fade key={ this.state.key }>
+ *                         <h2>Foo</h2>
+ *                     </Fade>
+ *                 </TransitionReplace>
+ *             </div>
+ *         );
+ *     }
+ * }
+ *
+ * ```
  *
  * The `<TransitionReplace>` takes the same props as
  * [`<TransitionGroup>`](https://reactcommunity.org/react-transition-group/#TransitionGroup)
