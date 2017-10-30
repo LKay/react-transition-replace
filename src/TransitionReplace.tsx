@@ -2,10 +2,7 @@ import * as React from "react";
 import {
     cloneElement,
     Component,
-    ComponentClass,
-    HTMLAttributes,
     ReactElement,
-    ReactType,
     CSSProperties,
     ReactNode,
     ReactInstance
@@ -86,7 +83,8 @@ function defaultChildFactory(child: ReactElement<any>): ReactElement<any> {
  * components. This means you can mix and match animations across different
  * list items.
  *
- * The `<TransitionReplace>` takes the same props as [`<TransitionGroup>`](https://reactcommunity.org/react-transition-group/#TransitionGroup)
+ * The `<TransitionReplace>` takes the same props as
+ * [`<TransitionGroup>`](https://reactcommunity.org/react-transition-group/#TransitionGroup)
  * and additionally accepts the following:
  */
 export default class TransitionReplace extends Component<TransitionReplaceProps, TransitionReplaceState> {

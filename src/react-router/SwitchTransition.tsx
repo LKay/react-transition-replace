@@ -1,7 +1,7 @@
 import * as React from "react";
 import { cloneElement, ComponentType, ReactElement, Component } from "react";
-import { withRouter, RouteProps, match } from "react-router-dom";
-import { Switch, SwitchProps, matchPath } from "react-router";
+import { RouteProps, match } from "react-router-dom";
+import { SwitchProps, matchPath } from "react-router";
 import { TransitionProps } from "react-transition-group/Transition";
 import { CSSTransitionProps } from "react-transition-group/CSSTransition";
 import * as PropTypes from "prop-types";
@@ -105,7 +105,7 @@ export default class SwitchTransition extends Component<SwitchTransitionProps> {
                         addEndListener={addEndListener}
                     >
                         <div>
-                            { React.cloneElement(child, { location, computedMatch: match }) }
+                            { cloneElement(child, { location, computedMatch: match }) }
                         </div>
                     </Transition>
                 }
