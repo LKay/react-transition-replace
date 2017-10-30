@@ -31,6 +31,7 @@ export type ChildFactory = (child: ReactElement<any>) => ReactElement<any>;
 
 export type TransitionReplaceProps = TransitionGroupProps & HTMLProps<any> & {
     changeWidth?: boolean;
+    childFactory?: ChildFactory;
     classNames?: string | TransitionReplaceClassNames;
     easing?: string;
     inlineTransitions?: boolean;
