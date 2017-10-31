@@ -5,12 +5,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
+### Changed
+- Docs moved to separate page
+- Deploy flow
+- Applying inline styles
 
 ## 0.2.4 - 2017-10-30
-### Changed
+### Fixed
 - HOTFIX publish
 
-## 0.2.3 - 2017-10-30
+## 0.2.3 - 2017-10-30 [YANKED]
 ### Added
 - Basic Examples
 

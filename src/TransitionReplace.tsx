@@ -127,6 +127,7 @@ function defaultChildFactory(child: ReactElement<any>): ReactElement<any> {
  *
  *                 <TransitionReplace
  *                     transition={ Fade }
+ *                     classNames="fade"
  *                 >
  *                     <Fade key={ this.state.key }>
  *                         <h2>Foo</h2>
@@ -136,7 +137,49 @@ function defaultChildFactory(child: ReactElement<any>): ReactElement<any> {
  *         );
  *     }
  * }
+ * ```
  *
+ * In case of `CSSTransition` you probably have some styles defined that for above example looks such as:
+ *
+ * ```css
+ * .fade-exit {
+ *     opacity: 1;
+ *  }
+ *
+ * .fade-exit.fade-exit-active {
+ *     opacity: 0;
+ *     transition: opacity .3s ease-in;
+ * }
+ *
+ * .fade-enter {
+ *     opacity: 0;
+ * }
+ *
+ * .fade-enter.fade-enter-active {
+ *     opacity: 1;
+ *     transition: opacity .3s ease-in;
+ * }
+ * ```
+ *
+ * And based on your `classNames` prop the container will also have CSS classes applied so you need
+ * to add them to yous stylesheet:
+ *
+ * ```css
+ * .fade-height {
+ *     height: auto;
+ * }
+ *
+ * .fade-height-active {
+ *     transition: height .3s ease-in-out;
+ * }
+ *
+ * .fade-width {
+ *     width: auto;
+ * }
+ *
+ * .fade-width-active {
+ *     transition: width .3s ease-in-out;
+ * }
  * ```
  *
  * The `<TransitionReplace>` takes the same props as
@@ -430,9 +473,9 @@ export default class TransitionReplace extends Component<TransitionReplaceProps,
             height,
             overflow                 : overflowHidden ? "hidden" : "visible",
             position                 : "relative",
-            transitionProperty       : active && inlineTransitions ? `height ${changeWidth ? ", width " : null}` : null,
-            transitionTimingFunction : active && inlineTransitions ? easing : null,
-            transitionDuration       : active && inlineTransitions ? `${this.getTransitionDuration()}ms` : null,
+            transitionProperty       : active ? `height ${changeWidth ? ", width " : null}` : null,
+            transitionTimingFunction : active ? easing : null,
+            transitionDuration       : active ? `${this.getTransitionDuration()}ms` : null,
             width                    : changeWidth ? width : null
         };
 
@@ -440,7 +483,7 @@ export default class TransitionReplace extends Component<TransitionReplaceProps,
             <Component
                 className={ this.getClassName() }
                 ref={ (wrapper: ReactInstance) => this.refWrapper = wrapper }
-                style={ active ? wrapperStyles : null }
+                style={ inlineTransitions ? wrapperStyles : null }
             >
                 { childFactory(child) }
                 { previousChild && childFactory(previousChild) }

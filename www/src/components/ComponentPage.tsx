@@ -24,12 +24,12 @@ class ComponentPage extends Component<any> {
 
         return (
             <div>
-                <h2 id={metadata.displayName}><a href={`#${metadata.displayName}`}>
+                <h4 id={metadata.displayName}><a href={`#${metadata.displayName}`}>
                     {metadata.displayName}</a>
-                </h2>
+                </h4>
                 <p dangerouslySetInnerHTML={{ __html: extractMarkdown(metadata) }} />
 
-                <h3>
+                <h4>
                     <div>Props</div>
                     {metadata.composes && (
                         <small style={{ fontStyle: 'italic', fontSize: '70%'}}>
@@ -37,7 +37,7 @@ class ComponentPage extends Component<any> {
                             from {metadata.composes.map(p => `<${p.replace('./', '')}>`).join(', ')} unless otherwise noted.
                         </small>
                     )}
-                </h3>
+                </h4>
 
                 {metadata.props.map(p =>
                     this.renderProp(p, metadata.displayName
