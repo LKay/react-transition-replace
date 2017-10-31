@@ -1,7 +1,11 @@
 import * as React from "react";
 import { Component } from "react";
 import * as PropTypes from "prop-types";
+import StaticPage from "../components/StaticPage";
 import ComponentPage from "../components/ComponentPage";
+
+const pkg = require("../../../package.json");
+const icon = require("../images/github.svg");
 
 require("../css/bootstrap.scss");
 require("../css/prism-theme.scss");
@@ -20,38 +24,38 @@ class Index extends Component<IndexProps> {
     }
 
     render() {
-        const { data: { transitionReplace, switchTransition } } = this.props;
+        const {
+            data: {
+                allMarkdownRemark : { edges : sections },
+                transitionReplace,
+                switchTransition
+            }
+        } = this.props;
+        const components = [transitionReplace, switchTransition];
 
         return (
             <div className="container" style={{ marginTop: "2rem" }}>
-                <h1>React Transition Replace</h1>
-                <section>
-                    <h2>Getting Started</h2>
-                    <p>
+                <h1>
+                    React Transition Replace
+                    <small style={{ marginLeft : "10px" }}>
+                        [
+                        <code>
+                            <a href={ `https://github.com/LKay/react-transition-replace/tree/${pkg.version}` }>
+                                { pkg.version }
+                            </a>
+                        </code>
+                        ]
+                    </small>
+                </h1>
 
-                    </p>
-                    <h3 className="h4">Installation</h3>
-<pre>
-<code>{`
-# npm
-npm install react-transition-replace --save
-# yarn
-yarn add react-transition-replace
-`}
-</code>
-</pre>
+                {
+                    sections
+                        .filter((section) => section.node.frontmatter.title.length > 0)
+                        .map(({ node : section }, key) => (<StaticPage key={ key } metadata={ section } />))
+                }
 
-                    <h3 className="h4">CDN / External</h3>
-                    <p>
-                        Since react-transition-group is fairly small, the overhead of including the library in your application is
-                        negligible. However, in situations where it may be useful to benefit from an external CDN when bundling, link
-                        to the following CDN: <a href="https://unpkg.com/react-transition-replace/dist/react-transition-replace.min.js">
-                        https://unpkg.com/react-transition-group/dist/react-transition-replace.min.js</a>
-                    </p>
-                </section>
                 <h2>Components</h2>
-                <ComponentPage metadata={ transitionReplace } />
-                <ComponentPage metadata={ switchTransition } />
+                { components.map((component, key) => (<ComponentPage key={ key } metadata={ component } />)) }
             </div>
         );
     }
@@ -60,7 +64,18 @@ yarn add react-transition-replace
 export default Index;
 
 export const pageQuery = graphql`
-  query Components {
+  query PagesAndComponents {
+    allMarkdownRemark {
+      edges {
+        node {
+          html
+          frontmatter {
+            title
+            link
+          }
+        }
+      }
+    }
     transitionReplace: componentMetadata(displayName: { eq: "TransitionReplace" }) {
       ...ComponentPage_metadata
     }
