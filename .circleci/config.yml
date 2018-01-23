@@ -48,8 +48,6 @@ workflows:
         jobs:
             - build:
                 filters:
-                    branches:
-                        only: /.*/
                     tags:
                         only: /.*/
             - deploy:
@@ -58,5 +56,3 @@ workflows:
                 filters:
                     tags:
                         only: /\d+(\.\d+){2}(-(alpha|beta)(\d+)?)?/
-                    branches:
-                        ignore: /.*/
