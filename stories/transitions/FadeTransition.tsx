@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Component } from "react";
-import CSSTransition = require("react-transition-group/CSSTransition");
+import CSSTransition from "react-transition-group/CSSTransition";
 import { TransitionProps } from "react-transition-group/Transition";
 import * as styles from "./fade.scss";
 

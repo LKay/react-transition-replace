@@ -7,7 +7,6 @@ module.exports = {
         author: "Karol Janyst",
     },
     plugins: [
-        "gatsby-plugin-typescript",
         {
             resolve: "gatsby-source-filesystem",
             options: {
@@ -18,7 +17,7 @@ module.exports = {
         {
             resolve: "gatsby-source-filesystem",
             options: {
-                path: path.join(__dirname, "../lib"),
+                path: path.join(__dirname, "../dist"),
                 name: "components",
             },
         },
@@ -31,6 +30,7 @@ module.exports = {
             },
         },
         "gatsby-transformer-react-docgen",
-        "gatsby-plugin-sass"
+        "gatsby-plugin-sass",
+        "gatsby-plugin-typescript"
     ],
 }

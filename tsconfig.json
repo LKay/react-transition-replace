@@ -2,16 +2,31 @@
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "target": "es5",
-    "lib": ["dom", "es6", "scripthost"],
-    "outDir": "lib",
+    "downlevelIteration": true,
+    "importHelpers": false,
+    "sourceMap": true,
     "module": "commonjs",
     "moduleResolution": "node",
-    "declaration": true,
-    "sourceMap": true,
-    "noImplicitAny": true,
-    "noImplicitThis": true,
-    "strictNullChecks": false,
     "jsx": "react",
+    "allowJs": true,
+    "checkJs": false,
+    "lib": [
+      "dom",
+      "es2015",
+      "es2016",
+      "es2017",
+      "esnext"
+    ],
+    "forceConsistentCasingInFileNames": true,
+    "experimentalDecorators": true,
+    "noImplicitAny": false,
+    "noUnusedParameters": false,
+    "noImplicitReturns": false,
+    "noImplicitThis": false,
+    "noUnusedLocals": false,
+    "skipLibCheck": true,
+    "strictNullChecks": false,
+    "suppressImplicitAnyIndexErrors": true,
     "baseUrl": ".",
     "paths": {
       "*": ["types/*"]
@@ -19,7 +34,8 @@
   },
   "files": [
     "src/index.ts",
-    "src/TransitionReplace.tsx"
+    "src/TransitionReplace.tsx",
+    "src/react-router/SwitchTransition.tsx"
   ],
   "exclude": [
     "node_modules"

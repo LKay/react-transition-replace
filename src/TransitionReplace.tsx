@@ -9,7 +9,7 @@ import {
     ReactInstance
 } from "react";
 import * as PropTypes from "prop-types";
-import * as invariant from "invariant";
+import invariant from "invariant";
 import { TransitionActions, TransitionProps } from "react-transition-group/Transition";
 import { TransitionGroupProps } from "react-transition-group/TransitionGroup";
 import { findDOMNode } from "react-dom";

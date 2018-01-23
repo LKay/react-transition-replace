@@ -1,39 +1,7 @@
 version: 2.0
 
 jobs:
-    checkout:
-        docker:
-            - image: node:8
-
-        steps:
-            - checkout
-            - run: echo $CIRCLE_SHA1 > .circle-sha
-            - save_cache:
-                key: project-{{ checksum ".circle-sha" }}
-                paths:
-                    - ~/project
-
-    dependencies:
-        docker:
-            - image: node:8
-
-        steps:
-            - run: echo $CIRCLE_SHA1 > .circle-sha
-            - restore_cache:
-                keys:
-                    - project-{{ checksum ".circle-sha" }}
-            - restore_cache:
-                keys:
-                    - node_modules-{{ checksum "package.json" }}
-
-            - run: npm i
-
-            - save_cache:
-                key: node_modules-{{ checksum "package.json" }}
-                paths:
-                    - ~/project/node_modules
-
-    test:
+    build:
         docker:
             - image: node:8
 
@@ -43,29 +11,19 @@ jobs:
             COVERALLS_PARALLEL: true
 
         steps:
+            - checkout
             - run: echo $CIRCLE_SHA1 > .circle-sha
-            - restore_cache:
-                keys:
-                    - project-{{ checksum ".circle-sha" }}
-            - restore_cache:
-                keys:
-                    - node_modules-{{ checksum "package.json" }}
+            - run: echo "Install Dependencies"
+            - run: npm i
+            - run: echo "Run Tests"
             - run: npm test
             - run: if [ $CIRCLE_BRANCH = 'master' ]; then npm run coverage; fi
-
-    build:
-        docker:
-            - image: node:8
-
-        steps:
-            - run: echo $CIRCLE_SHA1 > .circle-sha
-            - restore_cache:
-                keys:
-                    - project-{{ checksum ".circle-sha" }}
-            - restore_cache:
-                keys:
-                    - node_modules-{{ checksum "package.json" }}
+            - run: echo "Build"
             - run: npm run build
+            - save_cache:
+                key: project-{{ checksum ".circle-sha" }}
+                paths:
+                    - ~/project
 
     deploy:
         docker:
@@ -76,13 +34,11 @@ jobs:
             - restore_cache:
                 keys:
                     - project-{{ checksum ".circle-sha" }}
-            - restore_cache:
-                keys:
-                    - node_modules-{{ checksum "package.json" }}
             - run:
                 command: |
                     echo -e "$NPM_USERNAME\n$NPM_PASSWORD\n$NPM_EMAIL" | npm login
-                    npm publish lib
+                    npm publish --prefix dist
+                    npm run deploy-docs
                     npm logout
                     
 workflows:
@@ -90,16 +46,12 @@ workflows:
 
     build_and_deploy:
         jobs:
-            - checkout
-            - dependencies:
-                requires:
-                    - checkout
-            - test:
-                requires:
-                    - dependencies
             - build:
-                requires:
-                    - test
+                filters:
+                    branches:
+                        only: /.*/
+                    tags:
+                        only: /.*/
             - deploy:
                 requires:
                     - build

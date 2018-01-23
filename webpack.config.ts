@@ -1,5 +1,5 @@
-const webpack = require("webpack");
-const path = require("path");
+import webpack = require("webpack");
+import path = require("path");
 
 module.exports = {
 
@@ -9,13 +9,13 @@ module.exports = {
         filename : process.env.NODE_ENV === "production"
             ? "react-transition-replace.min.js"
             : "react-transition-replace.js",
-        path : path.join(__dirname, "lib/dist"),
+        path : path.join(__dirname, "dist/browser"),
         library : "ReactTransitionReplace",
         libraryTarget : "umd"
     },
 
     externals: {
-        react: {
+        "react": {
             root      : "React",
             commonjs2 : "react",
             commonjs  : "react",

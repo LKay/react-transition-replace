@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
+### Updated
+- Dependencies
+
+### Fixed
+- ES6 build
 
 ## 0.2.5 - 2017-10-31
 ### Changed
