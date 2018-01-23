@@ -50,6 +50,8 @@ workflows:
                 requires:
                     - checkout
                 filters:
+                    branches:
+                        only: /.*/
                     tags:
                         only: /.*/
             - deploy:
