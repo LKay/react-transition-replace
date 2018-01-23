@@ -36,10 +36,9 @@ jobs:
                     - project-{{ checksum ".circle-sha" }}
             - run:
                 command: |
-                    echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > .npmrc
+                    echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > ~/.npmrc
                     npm publish --prefix dist
                     npm run deploy-docs
-                    unlink .npmrc
                     
 workflows:
     version: 2
