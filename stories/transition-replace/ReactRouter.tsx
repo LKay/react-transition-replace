@@ -13,7 +13,7 @@ import { SlideProps } from "../common/Slide";
 import Button from "../common/Button";
 import ButtonToolbar from "../common/ButtonToolbar";
 import { imageFile } from "../common/image-file";
-import loremIpsum = require("lorem-ipsum");
+import loremIpsum from "lorem-ipsum";
 
 const TRANSITION_TIMEOUT = 300;
 

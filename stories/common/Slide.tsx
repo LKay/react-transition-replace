@@ -1,6 +1,6 @@
 import * as React from "react";
 import {Component, StatelessComponent} from "react";
-import loremIpsum = require("lorem-ipsum");
+import loremIpsum from "lorem-ipsum";
 import { imageFile } from "./image-file";
 import * as styles from "./style.scss";
 

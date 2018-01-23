@@ -1,8 +1,10 @@
 const webpack = require("webpack");
 const path = require("path");
+const tsconfig = require("../tsconfig.json");
 
 const SRC_PATH = path.join(__dirname, "../src");
 const STORIES_PATH = path.join(__dirname, "../stories");
+
 
 module.exports = {
 
@@ -12,7 +14,7 @@ module.exports = {
         ])
     ],
 
-    devtool   : "eval-source-maps",
+    devtool   : "cheap-module-source-map",
 
     resolve : {
         extensions : [".ts", ".tsx", ".js", ".scss", ".css"]
@@ -20,18 +22,16 @@ module.exports = {
 
     module : {
         rules: [
-            /*
-            {
-                enforce: "pre",
-                test: /\.jsx?$/,
-                exclude: /node_modules/,
-                use: "source-map"
-            },
-            */
             {
                 test: /\.tsx?$/,
                 use: [
-                    "awesome-typescript-loader",
+                    {
+                        loader : "awesome-typescript-loader",
+                        options : {
+                            ...tsconfig.compilerOptions,
+                            module : "es6"
+                        }
+                    },
                     "source-map-loader"
                 ],
                 include : [
@@ -59,8 +59,6 @@ module.exports = {
                             namedExport: true
                         }
                     },
-                    //"css-loader",
-                    //"resolve-url-loader",
                     {
                         loader : "sass-loader",
                         options : {

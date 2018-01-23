@@ -5,10 +5,10 @@ import { SwitchProps, matchPath } from "react-router";
 import { TransitionProps } from "react-transition-group/Transition";
 import { CSSTransitionProps } from "react-transition-group/CSSTransition";
 import * as PropTypes from "prop-types";
-import * as invariant from "invariant";
-import * as warning from "warning";
+import invariant from "invariant";
+import warning from "warning";
 import TransitionReplace, { TransitionReplaceProps } from "../TransitionReplace";
-import { Omit } from "../types";
+import { Omit } from "type-zoo";
 
 export type SwitchTransitionProps = SwitchProps & TransitionReplaceProps & Omit<CSSTransitionProps, "in"> & {
     transition: ComponentType<Partial<TransitionProps | CSSTransitionProps>>;
