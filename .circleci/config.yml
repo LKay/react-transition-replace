@@ -47,8 +47,6 @@ workflows:
     build_and_deploy:
         jobs:
             - build:
-                requires:
-                    - checkout
                 filters:
                     branches:
                         only: /.*/
