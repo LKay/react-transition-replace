@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
+
+## 0.2.6 - 2018-01-23
 ### Updated
 - Dependencies
 
@@ -84,7 +86,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Initial code for the module
 
 ## Compare
-- [Unreleased](https://github.com/LKay/react-transition-replace/compare/0.2.5...HEAD)
+- [Unreleased](https://github.com/LKay/react-transition-replace/compare/0.2.6...HEAD)
+- [0.2.6](https://github.com/LKay/react-transition-replace/compare/0.2.5...0.2.6)
 - [0.2.5](https://github.com/LKay/react-transition-replace/compare/0.2.4...0.2.5)
 - [0.2.4](https://github.com/LKay/react-transition-replace/compare/0.2.3...0.2.4)
 - [0.2.3](https://github.com/LKay/react-transition-replace/compare/0.2.2...0.2.3)

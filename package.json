@@ -6,7 +6,7 @@
   "module": "es/index.js",
   "browser": "browser/react-transition-replace.min.js",
   "scripts": {
-    "build": "rimraf lib && npm run build:lib && npm run build:es && npm run build:browser && cp README.md LICENSE ./dist",
+    "build": "rimraf dist && npm run build:lib && npm run build:es && npm run build:browser && cp README.md LICENSE ./dist",
     "build:lib": "rimraf dist/lib && tsc --outDir ./dist/lib",
     "build:es": "rimraf dist/es && tsc -m es6 --outDir ./dist/es",
     "build:browser": "rimraf dist/browser && webpack && NODE_ENV=production webpack -p",
