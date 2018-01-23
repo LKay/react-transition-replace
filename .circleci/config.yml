@@ -52,5 +52,7 @@ workflows:
                 requires:
                     - build
                 filters:
+                    branches:
+                        ignore: /.*/
                     tags:
                         only: /\d+(\.\d+){2}(-(alpha|beta)(\d+)?)?/
