@@ -37,7 +37,8 @@ jobs:
             - run:
                 command: |
                     echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > ~/.npmrc
-                    npm publish --prefix dist
+                    npm publish dist
+                    npm i --prefix www
                     npm run deploy-docs
                     
 workflows:
