@@ -1,5 +1,6 @@
 import webpack = require("webpack");
 import path = require("path");
+const tsconfig = require("./tsconfig.json");
 
 module.exports = {
 
@@ -51,7 +52,13 @@ module.exports = {
                 test: /\.tsx?$/,
                 exclude: /node_modules/,
                 use: [
-                    "awesome-typescript-loader"
+                    {
+                        loader : "awesome-typescript-loader",
+                        options : {
+                            ...tsconfig.compilerOptions,
+                            module : "es6"
+                        }
+                    },
                 ]
             }
         ]

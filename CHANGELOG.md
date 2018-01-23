@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+## 0.2.8 - 2018-01-23
+### Fixed
+- Build for browser
+
 ## 0.2.7 - 2018-01-23
 ### Fixed
 - Deploy flow
@@ -90,7 +94,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Initial code for the module
 
 ## Compare
-- [Unreleased](https://github.com/LKay/react-transition-replace/compare/0.2.7...HEAD)
+- [Unreleased](https://github.com/LKay/react-transition-replace/compare/0.2.8...HEAD)
+- [0.2.8](https://github.com/LKay/react-transition-replace/compare/0.2.7...0.2.8)
 - [0.2.7](https://github.com/LKay/react-transition-replace/compare/0.2.6...0.2.7)
 - [0.2.6](https://github.com/LKay/react-transition-replace/compare/0.2.5...0.2.6)
 - [0.2.5](https://github.com/LKay/react-transition-replace/compare/0.2.4...0.2.5)

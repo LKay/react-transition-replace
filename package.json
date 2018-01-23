@@ -4,7 +4,6 @@
   "description": "A React component to animate replacing one element with another.",
   "main": "lib/index.js",
   "module": "es/index.js",
-  "browser": "browser/react-transition-replace.min.js",
   "scripts": {
     "build": "rimraf dist && npm run build:lib && npm run build:es && npm run build:browser && npm run copy",
     "build:lib": "rimraf dist/lib && tsc --outDir ./dist/lib",
