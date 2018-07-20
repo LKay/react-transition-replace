@@ -18,19 +18,29 @@ export interface SlideState {
 }
 
 export default class Slide extends Component<SlideProps, SlideState> {
-    componentWillMount() {
+    constructor(props) {
+        super(props);
+
         const {
             index,
             description,
             image,
             title
-        } = this.props;
+        } = props;
 
-        this.setState({
+        this.state = {
             image       : image || imageFile(index),
             title       : title || loremIpsum({ sentenceUpperBound : 7 }),
             description : description || loremIpsum({ units : "paragraphs" })
-        });
+        };
+    }
+
+    componentWillMount() {
+        console.warn("MOUNT => ", this.props.title);
+    }
+
+    componentWillUnmount() {
+        console.warn("UNMOUNT => ", this.props.title);
     }
 
     render() {

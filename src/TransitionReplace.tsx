@@ -1,24 +1,26 @@
 import * as React from "react";
 import {
-    cloneElement,
+    isValidElement,
     Component,
     CSSProperties,
     HTMLProps,
     ReactElement,
-    ReactNode,
     ReactInstance
 } from "react";
 import * as PropTypes from "prop-types";
-import invariant from "invariant";
-import { TransitionActions, TransitionProps } from "react-transition-group/Transition";
+import { TransitionProps } from "react-transition-group/Transition";
 import { TransitionGroupProps } from "react-transition-group/TransitionGroup";
 import { findDOMNode } from "react-dom";
-
-function isNil(obj: any) {
-    return obj === undefined || obj === null;
-}
-
-const DEFAULT_TRANSITION_TIMEOUT: number = 0;
+import { classNamesShape } from "./utils/PropTypes";
+import {
+    ExitedHandler,
+    getInitialChildMapping,
+    getNextChildMapping,
+    RefHandler,
+    validateChildren
+} from "./utils/ChildMapping";
+import { getNodeSize } from "./utils/DOMUtils";
+import { isNil, values } from "./utils/MiscUtils";
 
 export interface TransitionReplaceClassNames {
     height?: string;
@@ -26,6 +28,15 @@ export interface TransitionReplaceClassNames {
     width?: string;
     widthActive?: string;
 }
+
+export const enum ChildKey {
+    Prev = "prev",
+    Next = "next"
+}
+
+export type TransitionChildren = {
+    [K in ChildKey]: ReactElement<TransitionProps>;
+};
 
 export type ChildFactory = (child: ReactElement<any>) => ReactElement<any>;
 
@@ -41,28 +52,12 @@ export type TransitionReplaceProps = TransitionGroupProps & HTMLProps<any> & {
 
 export interface TransitionReplaceState {
     active: boolean;
+    children: TransitionChildren;
+    firstRender: boolean;
+    handleExited: ExitedHandler;
+    handleRef: RefHandler;
     height: string | number;
-    previousChild: ReactElement<TransitionProps>;
     width: string | number;
-}
-
-function validateChildren(children: ReactNode): void {
-    const count = React.Children.count(children);
-
-    invariant(
-        count <= 1,
-        "A <TransitionReplace> may have only one child element"
-    );
-
-    if (count === 1) {
-        const child = React.Children.only(children);
-        if (!!child.props.children) {
-            invariant(
-                !!child.key,
-                "A child of <TransitionReplace> must have unique `key` property set"
-            );
-        }
-    }
 }
 
 function defaultChildFactory(child: ReactElement<any>): ReactElement<any> {
@@ -187,7 +182,6 @@ function defaultChildFactory(child: ReactElement<any>): ReactElement<any> {
  * and additionally accepts the following:
  */
 export default class TransitionReplace extends Component<TransitionReplaceProps, TransitionReplaceState> {
-
     static propTypes = {
         /**
          * A prop that enables or disables width animations for the container.
@@ -218,7 +212,7 @@ export default class TransitionReplace extends Component<TransitionReplaceProps,
          *  widthActive?: string
          * }}
          */
-        classNames        : PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+        classNames        : classNamesShape,
 
         /**
          * Defines transition timing function that will be applied to inline CSS styles.
@@ -247,28 +241,34 @@ export default class TransitionReplace extends Component<TransitionReplaceProps,
         easing            : "ease",
         inlineTransitions : true,
         overflowHidden    : false,
-        timeout           : DEFAULT_TRANSITION_TIMEOUT
+        timeout           : 0
     };
 
     static childContextTypes = {
         transitionGroup : PropTypes.object.isRequired
     };
 
-    state = {
-        active        : false,
-        height        : "auto",
-        width         : this.props.changeWidth ? "auto" : null,
-        previousChild : null
-    } as TransitionReplaceState;
-
     private mounted: boolean = false;
 
-    private refWrapper: ReactInstance;
-    private refChild: ReactInstance;
+    private refNextChild: ReactInstance;
     private refPreviousChild: ReactInstance;
 
     private animationId: number;
     private timeout: number;
+
+    constructor(props, context) {
+        super(props, context);
+
+        this.state = {
+            active        : false,
+            children      : null,
+            firstRender   : true,
+            handleExited  : this.handleExited.bind(this),
+            handleRef     : this.handleRef.bind(this),
+            height        : null,
+            width         : null
+        };
+    }
 
     getChildContext() {
         return {
@@ -278,110 +278,121 @@ export default class TransitionReplace extends Component<TransitionReplaceProps,
 
     private getTransitionDuration(): number {
         const {
-            children,
-            timeout
-        } = this.props;
-        const {
-            previousChild
+            children : {
+                [ChildKey.Prev] : prevChild,
+                [ChildKey.Next] : nextChild
+            }
         } = this.state;
-
-        const child: ReactElement<TransitionProps> = children ? React.Children.only(children) : null;
 
         return Math.max(
             // Timeout for exit transition
-            isNil(previousChild)
+            isNil(prevChild)
                 ? 0
                 : (
-                    typeof previousChild.props.timeout === "number"
-                        ? previousChild.props.timeout
+                    typeof prevChild.props.timeout === "number"
+                        ? prevChild.props.timeout
                         : (
-                            !isNil(previousChild.props.timeout) ? (previousChild.props.timeout.exit || 0) : 0
+                            !isNil(prevChild.props.timeout) ? (prevChild.props.timeout.exit || 0) : 0
                         )
                 ),
             // Timeout for enter transition
-            isNil(child)
+            isNil(nextChild)
                 ? 0
                 : (
-                    typeof child.props.timeout === "number"
-                        ? child.props.timeout
+                    typeof nextChild.props.timeout === "number"
+                        ? nextChild.props.timeout
                         : (
-                            !isNil(child.props.timeout) ? (child.props.timeout.enter || 0) : 0
+                            !isNil(nextChild.props.timeout) ? (nextChild.props.timeout.enter || 0) : 0
                         )
                 ),
             // Timeout specified on TransactionReplace
-            timeout
+            this.props.timeout
         );
     }
 
-    componentWillMount() {
-        validateChildren(this.props.children);
+    handleExited(child: ReactElement<TransitionProps>, node: HTMLElement): void {
+        if (typeof child.props.onExited === "function") {
+            child.props.onExited(node);
+        }
+
+        this.setState((state) => {
+            const children = { ...state.children };
+            delete children[ChildKey.Prev];
+            return { children };
+        });
+    }
+
+    handleRef(key: ChildKey, instance: ReactInstance): void {
+        switch (key) {
+            case ChildKey.Prev :
+                this.refPreviousChild = instance;
+                break;
+
+            case ChildKey.Next :
+                this.refNextChild = instance;
+                break;
+        }
+    }
+
+    static getDerivedStateFromProps(nextProps, state) {
+        validateChildren(nextProps.children);
+
+        const {
+            children : prevChildMapping,
+            firstRender,
+            handleExited,
+            handleRef
+        } = state;
+
+        return {
+            children : firstRender
+                ? getInitialChildMapping(nextProps, handleRef)
+                : getNextChildMapping(nextProps, handleRef, prevChildMapping, handleExited),
+            firstRender : false
+        };
     }
 
     componentWillUnmount() {
         clearTimeout(this.timeout);
         cancelAnimationFrame(this.animationId);
-        this.mounted = false;
     }
 
     componentDidMount() {
         this.mounted = true;
     }
 
-    componentWillReceiveProps(nextProps: TransitionReplaceProps) {
-        validateChildren(nextProps.children);
+    componentDidUpdate(prevProps: TransitionReplaceProps, prevState: TransitionReplaceState) {
+        const prevNextChild = prevState.children[ChildKey.Next];
+        const nextChild = this.state.children[ChildKey.Next];
 
-        const {
-            changeWidth,
-            children,
-            inlineTransitions
-        } = this.props;
-
-        const { previousChild } = this.state;
-
-        const child: ReactElement<TransitionProps> = children ? React.Children.only(children) : null;
-
-        if (children === nextProps.children || (child && previousChild && child.key === previousChild.key)) {
+        if (isValidElement(prevNextChild) && isValidElement(nextChild) && prevNextChild.key === nextChild.key) {
             return;
         }
 
-        const nodeWrapper = findDOMNode<HTMLElement>(this.refWrapper);
+        const {
+            changeWidth
+        } = this.props;
 
-        this.setState({
-            height        : nodeWrapper.offsetHeight,
-            previousChild : child,
-            width         : changeWidth ? nodeWrapper.offsetWidth : null
-        });
+        const prevNodeSize = getNodeSize(findDOMNode<HTMLElement>(this.refPreviousChild));
+        const nextNodeSize = getNodeSize(findDOMNode<HTMLElement>(this.refNextChild));
+
+        this.setState(() => ({
+            active : true,
+            height : prevNodeSize.height,
+            width  : changeWidth ? prevNodeSize.width : null
+        }));
 
         cancelAnimationFrame(this.animationId);
-
         this.animationId = requestAnimationFrame(() => {
-            const nodeChild = findDOMNode<HTMLElement>(this.refChild);
-            const height = nodeChild ? nodeChild.offsetHeight : 0;
-            const width = nodeChild ? nodeChild.offsetWidth : 0;
-
-            this.setState({
-                active : true,
-                height,
-                width  : changeWidth ? width : null
-            }, () => {
-                const nodePreviousChild = findDOMNode<HTMLElement>(this.refPreviousChild);
-
-                if (nodePreviousChild && inlineTransitions) {
-                    nodePreviousChild.style.position = "absolute";
-                    nodePreviousChild.style.top = "0";
-                    nodePreviousChild.style.left = "0";
-                    nodePreviousChild.style.width = "100%";
-                }
-            });
+            this.setState(() => ({
+                height : nextNodeSize.height,
+                width  : changeWidth ? nextNodeSize.width : null
+            }));
 
             clearTimeout(this.timeout);
-
             this.timeout = setTimeout(() => {
                 this.setState({
-                    active        : false,
-                    height        : "auto",
-                    previousChild : null,
-                    width         : changeWidth ? "auto" : null
+                    active        : false
                 });
             }, this.getTransitionDuration());
         });
@@ -429,64 +440,47 @@ export default class TransitionReplace extends Component<TransitionReplaceProps,
             .join(" ");
     }
 
-    // use child config unless explicitly set by the TransitionReplace component
-    private getProp(child: ReactElement<TransitionProps>, prop: keyof TransitionActions) {
-        return this.props[prop] !== null ? this.props[prop] : child.props[prop];
-    }
-
     render() {
         const {
             changeWidth,
-            children,
             childFactory = defaultChildFactory,
             component: Component = "div",
             easing,
             inlineTransitions,
-            overflowHidden
+            overflowHidden,
+            ...props
         } = this.props;
 
         const {
             active,
+            children,
             height,
             width
         } = this.state;
-
-        const currentChild = children ? React.Children.only(children) : null;
-        const child = children ? cloneElement(currentChild, {
-            appear : this.getProp(currentChild, "appear"),
-            enter  : this.getProp(currentChild, "enter"),
-            exit   : this.getProp(currentChild, "exit"),
-            in     : true,
-            ref    : (child: ReactInstance) => this.refChild = child
-        }) : null;
-
-        const previousChild = this.state.previousChild && (!child || this.state.previousChild.key !== child.key)
-            ? cloneElement<TransitionProps, Partial<TransitionProps>>(this.state.previousChild, {
-                enter : this.getProp(this.state.previousChild, "enter"),
-                exit  : this.getProp(this.state.previousChild, "exit"),
-                in    : false,
-                ref   : (child: ReactInstance) => this.refPreviousChild = child
-            })
-            : null;
 
         const wrapperStyles: CSSProperties = {
             height,
             overflow                 : overflowHidden ? "hidden" : "visible",
             position                 : "relative",
-            transitionProperty       : active ? `height ${changeWidth ? ", width " : null}` : null,
-            transitionTimingFunction : active ? easing : null,
-            transitionDuration       : active ? `${this.getTransitionDuration()}ms` : null,
+            transitionProperty       : `height ${changeWidth ? ", width " : null}`,
+            transitionTimingFunction : easing,
+            transitionDuration       : `${this.getTransitionDuration()}ms`,
             width                    : changeWidth ? width : null
         };
 
+        delete props.appear;
+        delete props.classNames;
+        delete props.enter;
+        delete props.exit;
+        delete props.timeout;
+
         return (
             <Component
+                { ...props }
                 className={ this.getClassName() }
-                ref={ (wrapper: ReactInstance) => this.refWrapper = wrapper }
-                style={ inlineTransitions ? wrapperStyles : null }
+                style={ active && inlineTransitions ? wrapperStyles : null }
             >
-                { childFactory(child) }
-                { previousChild && childFactory(previousChild) }
+                { values(children).map(childFactory) }
             </Component>
         );
     }

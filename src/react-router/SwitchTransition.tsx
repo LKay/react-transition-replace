@@ -149,21 +149,19 @@ export default class SwitchTransition extends Component<SwitchTransitionProps> {
             >
                 { !match ? null :
                     <Transition
-                        key={match ? match.path : route.match.path}
-                        timeout={timeout}
-                        mountOnEnter={mountOnEnter}
-                        unmountOnExit={unmountOnExit}
-                        onExited={onExited}
-                        onExit={onExit}
-                        onExiting={onExiting}
-                        onEntered={onEntered}
-                        onEnter={onEnter}
-                        onEntering={onEntering}
-                        addEndListener={addEndListener}
+                        key={ match ? match.path : route.match.path }
+                        timeout={ timeout }
+                        mountOnEnter={ mountOnEnter }
+                        unmountOnExit={ unmountOnExit }
+                        onExited={ onExited }
+                        onExit={ onExit }
+                        onExiting={ onExiting }
+                        onEntered={ onEntered }
+                        onEnter={ onEnter }
+                        onEntering={ onEntering }
+                        addEndListener={ addEndListener }
                     >
-                        <div>
-                            { cloneElement(child, { location, computedMatch: match }) }
-                        </div>
+                        { cloneElement(child, { location, computedMatch: match }) }
                     </Transition>
                 }
             </TransitionReplace>

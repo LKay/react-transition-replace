@@ -1,12 +1,13 @@
 import * as React from "react";
 import { Component } from "react";
-import transform = require("lodash.transform");
+import transform from "lodash.transform";
+import { graphql } from "gatsby";
 
 function displayObj(obj){
     return JSON.stringify(obj, null, 2).replace(/"|'/g, '')
 }
 
-const cleanDocletValue = str => str.trim().replace(/^\{/, '').replace(/\}$/, '');
+const cleanDocletValue = (str) => str.trim().replace(/^\{/, '').replace(/\}$/, '');
 
 const extractMarkdown = ({ description }) => (
     description &&

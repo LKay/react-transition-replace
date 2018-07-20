@@ -15,7 +15,9 @@
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "copy": "cp README.md LICENSE package.json dist",
-    "deploy-docs": "npm -C www run deploy"
+    "start:docs": "npm -C www run start",
+    "deploy-docs": "npm -C www run deploy",
+    "release": "np --no-yarn --no-publish"
   },
   "repository": {
     "type": "git",
@@ -36,8 +38,8 @@
   },
   "homepage": "https://github.com/LKay/react-transition-replace#readme",
   "dependencies": {
-    "invariant": "^2.2.2",
-    "prop-types": "^15.6.0",
+    "invariant": "^2.2.4",
+    "prop-types": "^15.6.2",
     "warning": "^3.0.0"
   },
   "devDependencies": {
@@ -48,37 +50,37 @@
     "@types/storybook__addon-actions": "^3.0.1",
     "@types/storybook__addon-info": "^3.2.1",
     "@types/storybook__react": "^3.0.6",
-    "awesome-typescript-loader": "^3.4.1",
+    "awesome-typescript-loader": "^5.2.0",
     "babel-core": "^6.26.0",
     "lorem-ipsum": "^1.0.4",
     "node-sass": "^4.7.2",
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0",
-    "react-router-dom": "^4.2.2",
-    "react-transition-group": "^2.2.1",
-    "release": "^3.1.5",
+    "np": "^3.0.4",
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1",
+    "react-router-dom": "^4.3.1",
+    "react-transition-group": "^2.4.0",
     "rimraf": "^2.6.2",
     "sass-loader": "^6.0.6",
     "source-map-loader": "^0.2.3",
     "storybook-router": "^0.3.2",
-    "ts-node": "^4.1.0",
-    "tslint": "^5.9.1",
-    "tslint-react": "^3.4.0",
-    "type-zoo": "^1.1.1",
-    "typescript": "^2.6.2",
+    "ts-node": "^7.0.0",
+    "tslint": "^5.11.0",
+    "tslint-react": "^3.6.0",
+    "type-zoo": "^3.1.0",
+    "typescript": "^2.9.2",
     "typings-for-css-modules-loader": "^1.7.0",
     "webpack": "^3.10.0"
   },
   "optionalDependencies": {
     "@types/invariant": "^2.2.29",
-    "@types/prop-types": "^15.5.2",
+    "@types/prop-types": "^15.5.3",
     "@types/react": ">=15",
     "@types/react-dom": ">=15",
-    "@types/react-transition-group": "^2.0.6",
+    "@types/react-transition-group": "^2.0.11",
     "@types/warning": "^3.0.0"
   },
   "peerDependencies": {
-    "react": ">=15",
-    "react-dom": ">=15"
+    "react": ">=16",
+    "react-dom": ">=16"
   }
 }

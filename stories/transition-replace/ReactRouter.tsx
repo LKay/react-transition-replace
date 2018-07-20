@@ -78,6 +78,7 @@ export default class Story extends Component<{}, StoryState> {
                     <Link className={ styles.button } to="/3/1">Route 3/1</Link>
                     <Link className={ styles.button } to="/3/2">Route 3/2</Link>
                     <Link className={ styles.button } to="/3/2">Route 3/3</Link>
+                    <Link className={ styles.button } to="/404">Route 404</Link>
                 </ButtonToolbar>
 
                 <hr />
@@ -87,6 +88,7 @@ export default class Story extends Component<{}, StoryState> {
                         transition={ FadeTransition }
                         overflowHidden
                     >
+                        <Route path="/" exact render={ () => Route1 } />
                         <Route path="/2" render={ () => Route2 } />
                         <Route path="/3" render={
                             ({ match : { path } }) => (
@@ -101,7 +103,6 @@ export default class Story extends Component<{}, StoryState> {
                                 </div>
                             )
                         } />
-                        <Route render={ () => Route1 } />
                     </SwitchTransition>
                 </div>
             </div>
