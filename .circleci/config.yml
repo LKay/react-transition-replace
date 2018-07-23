@@ -15,7 +15,7 @@ jobs:
             - run: echo $CIRCLE_SHA1 > .circle-sha
             - run: echo "Install Dependencies"
             - run: npm i
-            - run: npm i -C wwww
+            - run: npm i -C www
             - run: echo "Run Tests"
             - run: npm test
             - run: if [ $CIRCLE_BRANCH = 'master' ]; then npm run coverage; fi
@@ -72,9 +72,9 @@ workflows:
                     tags:
                         only: /\d+(\.\d+){2}(-(alpha|beta)(\d+)?)?/
 
-            - deploy:
+            - deploy-docs:
                 requires:
-                    - build
+                    - deploy
                 filters:
                     branches:
                         ignore: /.*/
