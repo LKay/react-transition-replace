@@ -4,6 +4,8 @@ const tsconfig = require("./tsconfig.json");
 
 module.exports = {
 
+    mode: "production",
+
     entry: path.join(__dirname, "./src/index.ts"),
 
     output: {

@@ -374,8 +374,8 @@ export default class TransitionReplace extends Component<TransitionReplaceProps,
             changeWidth
         } = this.props;
 
-        const prevNodeSize = getNodeSize(findDOMNode<HTMLElement>(this.refPreviousChild));
-        const nextNodeSize = getNodeSize(findDOMNode<HTMLElement>(this.refNextChild));
+        const prevNodeSize = getNodeSize(findDOMNode(this.refPreviousChild) as Element);
+        const nextNodeSize = getNodeSize(findDOMNode(this.refNextChild) as Element);
 
         this.setState(() => ({
             active : true,

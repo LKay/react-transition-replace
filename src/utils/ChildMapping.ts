@@ -87,7 +87,7 @@ export function getNextChildMapping(
             isValidElement(nextChild) && prevChild.key === nextChild.key
                 ? null
                 : {
-                    [ChildKey.Prev] : cloneElement<TransitionProps, Partial<TransitionProps>>(prevChild, {
+                    [ChildKey.Prev] : cloneElement(prevChild, {
                         onExited : onExited.bind(null, prevChild),
                         enter    : getProp(prevChild, "enter", nextProps),
                         exit     : getProp(prevChild, "exit", nextProps),

@@ -1,6 +1,6 @@
-export function getNodeSize(node: HTMLElement) {
+export function getNodeSize(node: Element) {
     return {
-        height : node ? node.offsetHeight : 0,
-        width  : node ? node.offsetWidth : 0
+        height : node ? (node as HTMLElement).offsetHeight : 0,
+        width  : node ? (node as HTMLElement).offsetWidth : 0
     };
 }
