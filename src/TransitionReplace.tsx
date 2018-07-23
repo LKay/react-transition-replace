@@ -21,6 +21,7 @@ import {
 } from "./utils/ChildMapping";
 import { getNodeSize } from "./utils/DOMUtils";
 import { isNil, values } from "./utils/MiscUtils";
+import Timer = NodeJS.Timer;
 
 export interface TransitionReplaceClassNames {
     height?: string;
@@ -254,7 +255,7 @@ export default class TransitionReplace extends Component<TransitionReplaceProps,
     private refPreviousChild: ReactInstance;
 
     private animationId: number;
-    private timeout: number;
+    private timeout: Timer;
 
     constructor(props, context) {
         super(props, context);

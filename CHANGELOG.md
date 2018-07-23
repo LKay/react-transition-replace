@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
+### Updated
+- Rewritten with React 16 guidelines (remove deprecated life cycle hooks)
+- Update docs configuration and layout
 
 ## 0.2.8 - 2018-01-23
 ### Fixed

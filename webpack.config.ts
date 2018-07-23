@@ -53,12 +53,14 @@ module.exports = {
                 exclude: /node_modules/,
                 use: [
                     {
-                        loader : "awesome-typescript-loader",
+                        loader : "ts-loader",
                         options : {
-                            ...tsconfig.compilerOptions,
-                            module : "es6"
+                            compilerOptions : {
+                                ...tsconfig.compilerOptions,
+                                module : "es6"
+                            }
                         }
-                    },
+                    }
                 ]
             }
         ]

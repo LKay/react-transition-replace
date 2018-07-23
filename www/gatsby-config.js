@@ -1,16 +1,30 @@
 const path = require("path");
+const pkg = require("../package.json");
 
 module.exports = {
     pathPrefix: "/react-transition-replace",
     siteMetadata: {
-        title: "React Transition Replace Documentation",
+        title: "React Transition Replace",
         author: "Karol Janyst",
+        version: pkg.version,
+        componentPages: [
+            {
+                path: "/transition-replace",
+                displayName: "TransitionReplace",
+                codeSandboxId: "FAKE"
+            },
+            {
+                path: "/react-router/switch-transition",
+                displayName: "SwitchTransition",
+                codeSandboxId: "FAKE"
+            }
+        ]
     },
     plugins: [
         {
             resolve: "gatsby-source-filesystem",
             options: {
-                path: path.join(__dirname, "src/pages"),
+                path: path.join(__dirname, "src/static"),
                 name: "pages",
             },
         },
@@ -30,7 +44,7 @@ module.exports = {
             },
         },
         "gatsby-transformer-react-docgen",
-        "gatsby-plugin-sass",
-        "gatsby-plugin-typescript"
-    ],
+        "gatsby-plugin-typescript",
+        "gatsby-plugin-sass"
+    ]
 }
