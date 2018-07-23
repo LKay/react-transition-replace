@@ -1,86 +1,118 @@
 import * as React from "react";
-import { Component } from "react";
-import * as PropTypes from "prop-types";
-import StaticPage from "../components/StaticPage";
-import ComponentPage from "../components/ComponentPage";
+import { graphql, Link } from "gatsby";
+import { Nav, NavItem } from "reactstrap";
+import Layout, { SiteData } from "../components/Layout";
+import StaticSection from "../components/StaticSection";
 
-const pkg = require("../../../package.json");
-const icon = require("../images/github.svg");
-
-require("../css/bootstrap.scss");
-require("../css/prism-theme.scss");
-
-export interface IndexProps {
-    data: any;
+export interface IndexPageData {
+    allMarkdownRemark: {
+        edges: Array<{
+            node: {
+                id: string;
+            }
+        }>;
+    };
+    site: SiteData;
 }
 
-class Index extends Component<IndexProps> {
-    static propTypes = {
-        data: PropTypes.object.isRequired
+export const indexPageQuery = graphql`
+    query IndexQuery {
+        allMarkdownRemark(
+            filter: {
+                fileAbsolutePath : {
+                    regex : "/static/"
+                }
+            }
+            sort: {
+                fields : [fileAbsolutePath]
+                order  : ASC
+            }
+        ) {
+            edges {
+                node {
+                    frontmatter {
+                        link
+                        title
+                    }
+                    html
+                }
+            }
+        }
+        site {
+            ...Layout_Site
+        }
     }
+`;
 
-    componentDidMount() {
-        document.title = "react-transition-replace";
-    }
+export interface IndexProps {
+    data: IndexPageData;
+    location: any;
+}
 
+export default class extends React.Component<IndexProps> {
     render() {
         const {
-            data: {
-                allMarkdownRemark : { edges : sections },
-                transitionReplace,
-                switchTransition
-            }
+            data : {
+                allMarkdownRemark : { edges : staticSections },
+                site : { siteMetadata : { componentPages, title, version } }
+            },
+            location
         } = this.props;
-        const components = [transitionReplace, switchTransition];
 
         return (
-            <div className="container" style={{ marginTop: "2rem" }}>
-                <h1>
-                    React Transition Replace
-                    <small style={{ marginLeft : "10px" }}>
-                        [
-                        <code>
-                            <a href={ `https://github.com/LKay/react-transition-replace/tree/${pkg.version}` }>
-                                { pkg.version }
-                            </a>
-                        </code>
-                        ]
-                    </small>
-                </h1>
+            <Layout
+                data={ this.props.data }
+                location={ location }
+            >
+                <h1 className="mb-1">{ title }</h1>
+
+                <div className="mb-4">
+                    <a
+                        href="https://www.npmjs.com/package/react-transition-replace"
+                        className="mr-1"
+                    >
+                        <img
+                            src="https://img.shields.io/npm/v/react-transition-replace.svg?style=flat-square"
+                            alt="npm"
+                        />
+                    </a>
+                    <a
+                        href="https://circleci.com/gh/LKay/react-transition-replace/tree/master"
+                        className="mr-1"
+                    >
+                        <img
+                            src={ `https://img.shields.io/circleci/project/github/LKay/react-transition-replace/${version}.svg?style=flat-square` }
+                            alt="CircleCI"
+                        />
+                    </a>
+                    <a href="https://coveralls.io/github/LKay/react-transition-replace">
+                        <img
+                            src={ `https://img.shields.io/coveralls/LKay/react-transition-replace/${version}.svg?style=flat-square` }
+                            alt="Coveralls"
+                        />
+                    </a>
+                </div>
 
                 {
-                    sections
-                        .filter((section) => section.node.frontmatter.title.length > 0)
-                        .map(({ node : section }, key) => (<StaticPage key={ key } metadata={ section } />))
+                    staticSections.map(({ node : metadata }) => <StaticSection metadata={ metadata } />)
                 }
 
-                <h2>Components</h2>
-                { components.map((component, key) => (<ComponentPage key={ key } metadata={ component } />)) }
-            </div>
+                <h2 id="Components">Components</h2>
+                <Nav vertical className="mb-3">
+                    { componentPages.map(
+                        ({ path, displayName }) => (
+                            <NavItem key={ path }>
+                                <Link
+                                    to={ path }
+                                    className="nav-link"
+                                >
+                                    { displayName }
+                                </Link>
+                            </NavItem>
+                        )
+                    )}
+                </Nav>
+            </Layout>
         );
     }
 }
-
-export default Index;
-
-export const pageQuery = graphql`
-  query PagesAndComponents {
-    allMarkdownRemark {
-      edges {
-        node {
-          html
-          frontmatter {
-            title
-            link
-          }
-        }
-      }
-    }
-    transitionReplace: componentMetadata(displayName: { eq: "TransitionReplace" }) {
-      ...ComponentPage_metadata
-    }
-    switchTransition: componentMetadata(displayName: { eq: "SwitchTransition" }) {
-      ...ComponentPage_metadata
-    }
-  }
-`;

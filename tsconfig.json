@@ -5,10 +5,11 @@
     "downlevelIteration": true,
     "importHelpers": false,
     "sourceMap": true,
+    "declaration": true,
     "module": "commonjs",
     "moduleResolution": "node",
     "jsx": "react",
-    "allowJs": true,
+    "allowJs": false,
     "checkJs": false,
     "lib": [
       "dom",

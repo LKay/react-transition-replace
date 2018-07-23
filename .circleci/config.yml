@@ -15,6 +15,7 @@ jobs:
             - run: echo $CIRCLE_SHA1 > .circle-sha
             - run: echo "Install Dependencies"
             - run: npm i
+            - run: npm i -C www
             - run: echo "Run Tests"
             - run: npm test
             - run: if [ $CIRCLE_BRANCH = 'master' ]; then npm run coverage; fi
@@ -38,6 +39,20 @@ jobs:
                 command: |
                     echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > ~/.npmrc
                     npm publish dist
+                    npm run deploy-docs
+
+    deploy-docs:
+        docker:
+            - image: node:8
+
+        steps:
+            - run: echo $CIRCLE_SHA1 > .circle-sha
+            - restore_cache:
+                keys:
+                    - project-{{ checksum ".circle-sha" }}
+            - run:
+                command: |
+                    npm run deploy-docs
                     
 workflows:
     version: 2
@@ -56,3 +71,12 @@ workflows:
                         ignore: /.*/
                     tags:
                         only: /\d+(\.\d+){2}(-(alpha|beta)(\d+)?)?/
+
+            - deploy-docs:
+                requires:
+                    - deploy
+                filters:
+                    branches:
+                        ignore: /.*/
+                    tags:
+                        only: /\d+(\.\d+){2}/

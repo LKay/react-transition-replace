@@ -4,6 +4,8 @@ const tsconfig = require("./tsconfig.json");
 
 module.exports = {
 
+    mode: "production",
+
     entry: path.join(__dirname, "./src/index.ts"),
 
     output: {
@@ -53,12 +55,14 @@ module.exports = {
                 exclude: /node_modules/,
                 use: [
                     {
-                        loader : "awesome-typescript-loader",
+                        loader : "ts-loader",
                         options : {
-                            ...tsconfig.compilerOptions,
-                            module : "es6"
+                            compilerOptions : {
+                                ...tsconfig.compilerOptions,
+                                module : "es6"
+                            }
                         }
-                    },
+                    }
                 ]
             }
         ]
