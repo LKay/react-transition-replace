@@ -47,7 +47,7 @@
     "@storybook/react": "^3.4.8",
     "@types/lorem-ipsum": "^1.0.2",
     "@types/node": "^10.5.2",
-    "@types/react-router-dom": "^4.3.0",
+    "@types/react-router": "^4.0.29",
     "@types/storybook__addon-actions": "^3.0.3",
     "@types/storybook__addon-info": "^3.2.3",
     "@types/storybook__react": "^3.0.8",
@@ -58,7 +58,7 @@
     "np": "^3.0.4",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
-    "react-router-dom": "^4.3.1",
+    "react-router": "^4.3.1",
     "react-transition-group": "^2.4.0",
     "rimraf": "^2.6.2",
     "sass-loader": "^7.0.3",
@@ -79,11 +79,13 @@
     "@types/prop-types": "^15.5.3",
     "@types/react": ">=16",
     "@types/react-dom": ">=16",
+    "@types/react-router": ">=4",
     "@types/react-transition-group": "^2.0.11",
     "@types/warning": "^3.0.0"
   },
   "peerDependencies": {
     "react": ">=16",
-    "react-dom": ">=16"
+    "react-dom": ">=16",
+    "react-router": ">=4"
   }
 }

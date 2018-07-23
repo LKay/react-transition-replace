@@ -1,7 +1,6 @@
 import * as React from "react";
 import { cloneElement, ComponentType, ReactElement, Component } from "react";
-import { RouteProps, match } from "react-router-dom";
-import { SwitchProps, matchPath } from "react-router";
+import { RouteProps, match, SwitchProps, matchPath } from "react-router";
 import { TransitionProps } from "react-transition-group/Transition";
 import { CSSTransitionProps } from "react-transition-group/CSSTransition";
 import * as PropTypes from "prop-types";
